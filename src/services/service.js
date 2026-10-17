@@ -1,0 +1,17 @@
+export const SERVICE_METHODS = [
+  'listBusinesses',
+  'listNumbers',
+  'listConversations',
+  'getConversation',
+  'listMessages',
+  'listSources',
+  'getNotificationSettings',
+  'takeConversation',
+  'returnToBot',
+  'sendMessage',
+  'updateConversation',
+  'addSource',
+  'toggleSource',
+  'deleteSource',
+  'saveNotificationSettings',
+];
