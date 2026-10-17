@@ -21,17 +21,25 @@ El detalle de pantallas está en `docs/borrador-ui.md` (documento fuente, no es 
 - Sin plantillas de Meta.
 - Varios negocios. Cada uno con varios números y fuentes de conocimiento (enlace, PDF, .md, TXT, texto pegado).
 - Plazos: 10 min esperando asesor. 15 min sin respuesta. Devolución automática al bot tras 4 h de inactividad (configurable).
+- Navegación: tres destinos: Conversaciones, Negocios (incluye fuentes) y Ajustes.
 
 ## Tecnología (fase UI)
-React + Vite + TypeScript. Tailwind CSS. react-router. Vitest + Testing Library para lógica pura.
-Sin librerías de estado ni de componentes sin aprobación. Sin dependencias nuevas sin preguntar.
-Móvil primero (390 px). Manifiesto de aplicación web para la pantalla de inicio del iPhone.
+HTML + CSS + JavaScript con módulos ES. Sin frameworks, sin TypeScript, sin Tailwind y sin paso de compilación.
+Pruebas con el ejecutor de Node (`node --test`). Sin dependencias.
+Móvil primero (390 px de referencia). Para verla en el navegador se necesita un servidor local (Live Server o `npx serve .`).
 
 ## Arquitectura (fase UI)
-- `src/domain`: tipos y lógica pura. Ventana de 24 h, estados de atención, presupuesto de contexto, ocultar teléfono. Sin React.
-- `src/services`: interfaz de servicio y su versión con datos simulados. Las pantallas solo hablan con esta capa.
-- `src/pages` y `src/components`: pantallas y piezas. Poca lógica.
+- `src/domain`: lógica pura (ventana de 24 h, estados de atención, presupuesto de contexto, teléfonos). Sin DOM. La hora actual entra como parámetro.
 - `src/mock`: datos ficticios.
+- `src/services`: lista de métodos del servicio y su versión simulada. La interfaz solo habla con esta capa.
+- `src/ui`: pantallas y piezas de interfaz.
+- `src/styles`: CSS con variables.
+- `tests`: pruebas.
+
+## Reglas para la interfaz (specs 002 en adelante)
+- Un solo objeto de estado. Una función de dibujo por pantalla. Eventos con atributos `data-action`.
+- Textos de clientes con `textContent`, nunca como HTML.
+- CSS móvil primero, con variables en `src/styles/tokens.css`.
 
 ## Arquitectura futura (no implementar ahora)
 Panel estático → Supabase (login, lectura, tiempo real) y → servidor del bot (enviar mensaje, cambiar atención) → API de WhatsApp.
@@ -46,6 +54,10 @@ Cambiar el mock por el servicio real no debe tocar las pantallas.
 - KnowledgeSource: id, businessId, kind (url | pdf | md | txt | text), title, origin, status (ready | processing | error), charCount, enabled, updatedAt, previewText.
 - NotificationSettings: email, events, quietHours?.
 
+## Métodos del servicio
+Lectura: listBusinesses, listNumbers, listConversations, getConversation, listMessages, listSources, getNotificationSettings.
+Escritura: takeConversation, returnToBot, sendMessage, updateConversation, addSource, toggleSource, deleteSource, saveNotificationSettings.
+
 ## Convenciones
 - Textos de interfaz: español de México. Identificadores de código: inglés.
 - Horas en hora de Guadalajara.
@@ -53,6 +65,6 @@ Cambiar el mock por el servicio real no debe tocar las pantallas.
 - Sin secretos en el código del navegador.
 
 ## Supuestos y riesgos
-- Repo nuevo `wabbott-panel`, separado del bot.
+- Repo `wabbott-panel`, separado del bot.
 - El límite de 30,000 caracteres de contexto viene del bot actual. Confirmar después.
 - El contrato de datos puede cambiar al revisar la interfaz con Héctor. Se congela al aprobarla.
