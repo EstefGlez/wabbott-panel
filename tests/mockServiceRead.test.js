@@ -199,22 +199,6 @@ describe('mockService.js - Servicio simulado de lectura', () => {
     });
   });
 
-  describe('métodos de escritura', () => {
-    const writeMethods = [
-      'takeConversation', 'returnToBot', 'sendMessage', 'updateConversation',
-      'addSource', 'toggleSource', 'deleteSource', 'saveNotificationSettings'
-    ];
-
-    for (const method of writeMethods) {
-      it(`${method} lanza Error('No implementado')`, async () => {
-        await assert.rejects(
-          service[method]('dummy'),
-          { message: 'No implementado' }
-        );
-      });
-    }
-  });
-
   describe('dos servicios no comparten datos', () => {
     it('son objetos distintos', () => {
       const s1 = createMockService({ now: () => NOW });

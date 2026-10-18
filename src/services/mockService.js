@@ -2,6 +2,9 @@ import { businesses, phoneNumbers } from '../mock/businesses.js';
 import { sources } from '../mock/sources.js';
 import { buildConversations, buildMessages } from '../mock/conversations.js';
 import { digitsOnly } from '../domain/phone.js';
+import { applyTake, applyReturnToBot, canSend } from '../domain/attention.js';
+import { getWindowStatus } from '../domain/window.js';
+import { SOURCE_KINDS } from '../domain/contract.js';
 
 /**
  * @param {{ now?: () => Date }} options
@@ -26,6 +29,33 @@ export function createMockService({ now = () => new Date() } = {}) {
 
   // Helper para devolver copias
   const clone = (data) => structuredClone(data);
+
+  // Contadores internos para IDs únicos
+  let messageCounter = {};
+  let sourceCounter = 0;
+
+  // Inicializar contadores de mensajes con los máximos existentes
+  for (const msg of state.messages) {
+    const match = msg.id.match(/^msg-(.+)-\d+$/);
+    if (match) {
+      const convId = match[1];
+      const n = parseInt(msg.id.split('-').pop(), 10);
+      if (!messageCounter[convId] || n > messageCounter[convId]) {
+        messageCounter[convId] = n;
+      }
+    }
+  }
+
+  function nextMessageId(conversationId) {
+    const n = (messageCounter[conversationId] || 0) + 1;
+    messageCounter[conversationId] = n;
+    return `msg-${conversationId}-${n}`;
+  }
+
+  function nextSourceId() {
+    sourceCounter += 1;
+    return `src-new-${sourceCounter}`;
+  }
 
   async function listBusinesses() {
     return clone(state.businesses);
@@ -87,37 +117,154 @@ export function createMockService({ now = () => new Date() } = {}) {
     return clone(state.notificationSettings);
   }
 
-  // Métodos de escritura (no implementados en esta tarea)
-  async function takeConversation() {
-    throw new Error('No implementado');
+  // Métodos de escritura
+  async function takeConversation(id) {
+    const idx = state.conversations.findIndex(c => c.id === id);
+    if (idx === -1) throw new Error('Conversación no encontrada');
+
+    const { conversation: newConv, event } = applyTake(state.conversations[idx], now());
+    state.conversations[idx] = newConv;
+
+    // Agregar evento al hilo de mensajes
+    state.messages.push({
+      ...event,
+      id: nextMessageId(id),
+      createdAt: new Date(event.createdAt),
+    });
+
+    return clone(newConv);
   }
 
-  async function returnToBot() {
-    throw new Error('No implementado');
+  async function returnToBot(id) {
+    const idx = state.conversations.findIndex(c => c.id === id);
+    if (idx === -1) throw new Error('Conversación no encontrada');
+
+    const { conversation: newConv, event } = applyReturnToBot(state.conversations[idx], now());
+    state.conversations[idx] = newConv;
+
+    state.messages.push({
+      ...event,
+      id: nextMessageId(id),
+      createdAt: new Date(event.createdAt),
+    });
+
+    return clone(newConv);
   }
 
-  async function sendMessage() {
-    throw new Error('No implementado');
+  async function sendMessage(id, text) {
+    const conv = state.conversations.find(c => c.id === id);
+    if (!conv) throw new Error('Conversación no encontrada');
+
+    const trimmed = text?.trim?.() ?? '';
+    if (!trimmed) throw new Error('El mensaje no puede estar vacío');
+
+    const windowStatus = getWindowStatus(conv.lastCustomerMessageAt, now());
+    const { allowed, reason } = canSend(conv.handler, windowStatus);
+    if (!allowed) throw new Error(reason);
+
+    const message = {
+      id: nextMessageId(id),
+      conversationId: id,
+      author: 'human',
+      type: 'text',
+      body: trimmed,
+      createdAt: now(),
+      deliveryStatus: 'sent',
+    };
+
+    state.messages.push(message);
+    return clone(message);
   }
 
-  async function updateConversation() {
-    throw new Error('No implementado');
+  async function updateConversation(id, changes) {
+    const idx = state.conversations.findIndex(c => c.id === id);
+    if (idx === -1) throw new Error('Conversación no encontrada');
+
+    const allowedFields = ['customerName', 'tags', 'notes'];
+    const newConv = { ...state.conversations[idx] };
+
+    for (const field of allowedFields) {
+      if (changes[field] !== undefined) {
+        newConv[field] = changes[field];
+      }
+    }
+
+    state.conversations[idx] = newConv;
+    return clone(newConv);
   }
 
-  async function addSource() {
-    throw new Error('No implementado');
+  async function addSource(businessId, { kind, title, origin, charCount }) {
+    if (!state.businesses.some(b => b.id === businessId)) {
+      throw new Error('Negocio no encontrado');
+    }
+    if (!SOURCE_KINDS.includes(kind)) {
+      throw new Error('Tipo de fuente no válido');
+    }
+    const trimmedTitle = title?.trim?.() ?? '';
+    if (!trimmedTitle) throw new Error('Título requerido');
+    if (!Number.isInteger(charCount) || charCount < 0) {
+      throw new Error('Tamaño no válido');
+    }
+
+    const newSource = {
+      id: nextSourceId(),
+      businessId,
+      kind,
+      title: trimmedTitle,
+      origin,
+      status: 'ready',
+      charCount,
+      enabled: true,
+      updatedAt: now(),
+      previewText: '',
+    };
+
+    state.sources.push(newSource);
+    return clone(newSource);
   }
 
-  async function toggleSource() {
-    throw new Error('No implementado');
+  async function toggleSource(id, enabled) {
+    const idx = state.sources.findIndex(s => s.id === id);
+    if (idx === -1) throw new Error('Fuente no encontrada');
+    if (typeof enabled !== 'boolean') throw new Error('Valor no válido');
+
+    state.sources[idx] = {
+      ...state.sources[idx],
+      enabled,
+      updatedAt: now(),
+    };
+
+    return clone(state.sources[idx]);
   }
 
-  async function deleteSource() {
-    throw new Error('No implementado');
+  async function deleteSource(id) {
+    const idx = state.sources.findIndex(s => s.id === id);
+    if (idx === -1) throw new Error('Fuente no encontrada');
+    state.sources.splice(idx, 1);
   }
 
-  async function saveNotificationSettings() {
-    throw new Error('No implementado');
+  async function saveNotificationSettings(changes) {
+    const { email, events, quietHours } = changes || {};
+
+    if (email !== undefined) {
+      if (typeof email !== 'string' || !email.includes('@')) {
+        throw new Error('Correo no válido');
+      }
+      state.notificationSettings.email = email;
+    }
+
+    if (events !== undefined) {
+      if (!Array.isArray(events) || !events.every(e => typeof e === 'string')) {
+        throw new Error('Eventos no válidos');
+      }
+      state.notificationSettings.events = events;
+    }
+
+    if (quietHours !== undefined) {
+      state.notificationSettings.quietHours = quietHours;
+    }
+
+    return clone(state.notificationSettings);
   }
 
   return {
