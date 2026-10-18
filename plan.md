@@ -4,8 +4,8 @@ Cada spec: `/sdd-spec` → aprobar → `/sdd-plan` → aprobar → `/sdd-tasks` 
 Máx. 10 tareas por spec. Si salen más, dividir.
 
 ## Fase 1: interfaz con datos simulados
-- [ ] 0. Chore: cambiar al stack HTML/CSS/JS, nueva constitución y AGENTS.md. Rama `chore/stack-vanilla`.
-- [ ] 1. Spec 001: reglas del dominio y datos simulados (RF-1 a RF-27). Spec y tareas ya escritas.
+- [x] 0. Chore: cambiar al stack HTML/CSS/JS, nueva constitución y AGENTS.md. Rama `chore/stack-vanilla`.
+- [x] 1. Spec 001: reglas del dominio y datos simulados (RF-1 a RF-27). Spec y tareas ya escritas.
 - [ ] 2. Spec 002: estructura base, diseño adaptable y navegación. Depende de 001.
 - [ ] 3. Spec 003: bandeja de conversaciones (S2). Depende de 001 y 002.
 - [ ] 4. Spec 004: conversación (S3). Depende de 001 y 002.

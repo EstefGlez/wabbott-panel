@@ -18,13 +18,13 @@
 | RF-14 | Enlace wa.me: https://wa.me/ + dígitos internacionales | `tests/phone.test.js` (buildWhatsAppLink) |
 | RF-15 | Teléfono <10 o >15 dígitos → sin enlace wa.me | `tests/phone.test.js` (buildWhatsAppLink con 9 y 16 dígitos) |
 | RF-16 | Presupuesto = suma charCount de fuentes activas (enabled + ready) | `tests/contextBudget.test.js` (calculateTotalChars, isActiveSource) |
-| RF-17 | Total 24,001–30,000 → nivel warning | `tests/contextBudget.test.js` (getBudgetLevel 24001, 30000) |
+| RF-17 | Total 24,001–30,000 → nivel warning; 24,000 sigue en normal | `tests/contextBudget.test.js` (getBudgetLevel 24000, 24001, 30000) |
 | RF-18 | Total >30,000 → nivel danger + mensaje | `tests/contextBudget.test.js` (getBudgetLevel 30001, getBudgetMessage danger) |
-| RF-19 | 5 tipos de fuente: url, pdf, md, txt, text | `tests/contract.test.js` (SOURCE_KINDS); `tests/mockSources.test.js` (cada negocio tiene url, pdf, md) |
-| RF-20 | Teléfono en listas: oculta dígitos medios (+CC AA ••• LLLL) | `tests/phone.test.js` (maskPhone) |
+| RF-19 | 5 tipos de fuente: url, pdf, md, txt, text | `tests/contract.test.js` (SOURCE_KINDS); `tests/mockSources.test.js` (cada negocio tiene url, pdf, md); `tests/mockServiceWrite.test.js` (addSource rechaza un tipo no válido) |
+| RF-20 | Teléfono en listas: oculta dígitos medios (+CC AA ••• LLLL). Solo se prueba con 12 dígitos (código de país de 2 dígitos) | `tests/phone.test.js` (maskPhone) |
 | RF-21 | Teléfono <10 dígitos → solo últimos 4 (•••xxxx) | `tests/phone.test.js` (maskPhone con 9, 8, 3 dígitos) |
 | RF-22 | Teléfono en vista conversación → completo con formato legible | `tests/phone.test.js` (formatPhone) |
-| RF-23 | Solo datos ficticios, ningún nombre/teléfono real | `tests/mockSources.test.js` (negocios nombres/colores); `tests/mockConversations.test.js` (teléfonos 525555550NN) |
+| RF-23 | Teléfonos ficticios (comprobado con pruebas). Los nombres ("Cliente Demo N", "Negocio Demo") se verifican por inspección, no con pruebas | `tests/mockSources.test.js` (todos los e164 empiezan con +52555555); `tests/mockConversations.test.js` (todo customerPhone empieza con 525555550) |
 | RF-24 | ≥3 negocios con nombre y color distintos | `tests/mockSources.test.js` (3 negocios, nombres y colores distintos) |
 | RF-25 | ≥12 conversaciones: 3 handlers, 4 niveles ventana, unread>0, image/audio, eventos take/return, 3 negocios | `tests/mockConversations.test.js` (dos referencias now, cobertura completa) |
 | RF-26 | Horas relativas al now (se mantienen al abrir en cualquier momento) | `tests/mockConversations.test.js` (buildConversations con now y now+3días) |

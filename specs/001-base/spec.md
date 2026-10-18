@@ -86,7 +86,7 @@ Héctor, dueño de varios negocios. Usa iPhone. Es poco técnico.
 - Servidor y base de datos.
 
 ## Criterios de finalización
-- Las reglas RF-1 a RF-22 tienen pruebas automáticas en verde, incluidos los casos límite.
+- Las reglas RF-1 a RF-22, excepto RF-11 (interfaz, spec 004), tienen pruebas automáticas en verde, incluidos los casos límite.
 - Los datos simulados cumplen RF-23 a RF-27, verificado con pruebas.
 - `npm test` pasa completo.
 
