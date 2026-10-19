@@ -98,6 +98,10 @@
   #app {
     padding-top: var(--space-4);
   }
+
+  #conversation-detail {
+    display: none;
+  }
 }
 
 /* Escritorio: ≥ 1024px - barra lateral, dos zonas en Conversaciones */
