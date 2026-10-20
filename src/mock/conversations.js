@@ -1,4 +1,5 @@
 import { businesses, phoneNumbers } from './businesses.js';
+import { getWindowExpiration } from '../domain/window.js';
 
 /**
  * @param {Date} now
@@ -21,19 +22,23 @@ export function buildConversations(now) {
     ['conv-12', 'biz-demo3', 'num-demo3-1', 'Cliente Demo 12', '525555550912', 'waiting_human', 2400, 0, 'medico'],
   ];
 
-  return convSpecs.map(([id, businessId, phoneNumberId, customerName, customerPhone, handler, minutesAgo, unreadCount, handoffReason]) => ({
-    id,
-    businessId,
-    phoneNumberId,
-    customerName,
-    customerPhone,
-    handler,
-    lastCustomerMessageAt: new Date(now.getTime() - minutesAgo * 60 * 1000),
-    unreadCount,
-    tags: [],
-    notes: '',
-    handoffReason,
-  }));
+  return convSpecs.map(([id, businessId, phoneNumberId, customerName, customerPhone, handler, minutesAgo, unreadCount, handoffReason]) => {
+    const lastCustomerMessageAt = new Date(now.getTime() - minutesAgo * 60 * 1000);
+    return {
+      id,
+      businessId,
+      phoneNumberId,
+      customerName,
+      customerPhone,
+      handler,
+      lastCustomerMessageAt,
+      windowExpiresAt: getWindowExpiration(lastCustomerMessageAt).toISOString(),
+      unreadCount,
+      tags: [],
+      notes: '',
+      handoffReason,
+    };
+  });
 }
 
 /**

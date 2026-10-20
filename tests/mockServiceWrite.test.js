@@ -234,7 +234,7 @@ describe('mockService.js - Servicio simulado de escritura', () => {
     });
 
     it('no devuelve nada', async () => {
-      const src = await service.addSource('biz-gh', { kind: 'md', title: 'X', origin: 'x', charCount: 100 });
+      const src = await service.addSource('biz-gh', { kind: 'md', title: 'X', origin: '/docs/readme.md', charCount: 100 });
       const result = await service.deleteSource(src.id);
       assert.equal(result, undefined);
     });

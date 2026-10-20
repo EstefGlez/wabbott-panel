@@ -5,6 +5,8 @@ import { digitsOnly } from '../domain/phone.js';
 import { applyTake, applyReturnToBot, canSend } from '../domain/attention.js';
 import { getWindowStatus } from '../domain/window.js';
 import { SOURCE_KINDS } from '../domain/contract.js';
+import { validateBusinessName, validateBusinessColor, BUSINESS_COLOR_PALETTE } from '../domain/business.js';
+import { validateSourceInput } from '../domain/source.js';
 
 /**
  * @param {{ now?: () => Date }} options
@@ -33,8 +35,10 @@ export function createMockService({ now = () => new Date() } = {}) {
   // Contadores internos para IDs únicos
   let messageCounter = {};
   let sourceCounter = 0;
+  let businessCounter = 0;
+  let numberCounter = 0;
 
-  // Inicializar contadores de mensajes con los máximos existentes
+  // Inicializar contadores con los máximos existentes
   for (const msg of state.messages) {
     const match = msg.id.match(/^msg-(.+)-\d+$/);
     if (match) {
@@ -43,6 +47,22 @@ export function createMockService({ now = () => new Date() } = {}) {
       if (!messageCounter[convId] || n > messageCounter[convId]) {
         messageCounter[convId] = n;
       }
+    }
+  }
+
+  for (const biz of state.businesses) {
+    const match = biz.id.match(/^biz-(\d+)$/);
+    if (match) {
+      const n = parseInt(match[1], 10);
+      if (n > businessCounter) businessCounter = n;
+    }
+  }
+
+  for (const num of state.phoneNumbers) {
+    const match = num.id.match(/^num-.*-(\d+)$/);
+    if (match) {
+      const n = parseInt(match[1], 10);
+      if (n > numberCounter) numberCounter = n;
     }
   }
 
@@ -55,6 +75,16 @@ export function createMockService({ now = () => new Date() } = {}) {
   function nextSourceId() {
     sourceCounter += 1;
     return `src-new-${sourceCounter}`;
+  }
+
+  function nextBusinessId() {
+    businessCounter += 1;
+    return `biz-${businessCounter}`;
+  }
+
+  function nextNumberId(businessId) {
+    numberCounter += 1;
+    return `num-${businessId}-${numberCounter}`;
   }
 
   async function listBusinesses() {
@@ -206,12 +236,16 @@ export function createMockService({ now = () => new Date() } = {}) {
       throw new Error('Tamaño no válido');
     }
 
+    // Validate origin using domain validation
+    const validation = validateSourceInput(kind, { title: trimmedTitle, origin, charCount });
+    if (!validation.valid) throw new Error(validation.error);
+
     const newSource = {
       id: nextSourceId(),
       businessId,
       kind,
       title: trimmedTitle,
-      origin,
+      origin: validation.valid ? origin : origin, // origin is already validated
       status: 'ready',
       charCount,
       enabled: true,
@@ -241,6 +275,148 @@ export function createMockService({ now = () => new Date() } = {}) {
     const idx = state.sources.findIndex(s => s.id === id);
     if (idx === -1) throw new Error('Fuente no encontrada');
     state.sources.splice(idx, 1);
+  }
+
+  // Business CRUD
+  async function updateBusiness(id, changes) {
+    const idx = state.businesses.findIndex(b => b.id === id);
+    if (idx === -1) throw new Error('Negocio no encontrado');
+
+    const allowedFields = ['name', 'color'];
+    const newBusiness = { ...state.businesses[idx] };
+
+    for (const field of allowedFields) {
+      if (changes[field] !== undefined) {
+        if (field === 'name') {
+          const validation = validateBusinessName(changes.name, state.businesses.filter((_, i) => i !== idx).map(b => b.name));
+          if (!validation.valid) throw new Error(validation.error);
+        }
+        if (field === 'color') {
+          if (!validateBusinessColor(changes.color)) throw new Error('Color no válido');
+        }
+        newBusiness[field] = changes[field];
+      }
+    }
+
+    state.businesses[idx] = newBusiness;
+    return clone(newBusiness);
+  }
+
+  async function deleteBusiness(id) {
+    const idx = state.businesses.findIndex(b => b.id === id);
+    if (idx === -1) throw new Error('Negocio no encontrado');
+    // Also delete associated phone numbers and sources
+    state.phoneNumbers = state.phoneNumbers.filter(n => n.businessId !== id);
+    state.sources = state.sources.filter(s => s.businessId !== id);
+    state.businesses.splice(idx, 1);
+  }
+
+  // Phone Number CRUD
+  async function addNumber(businessId, { displayName, e164 }) {
+    if (!state.businesses.some(b => b.id === businessId)) {
+      throw new Error('Negocio no encontrado');
+    }
+    const trimmedDisplayName = displayName?.trim?.() ?? '';
+    if (!trimmedDisplayName) throw new Error('Nombre para mostrar requerido');
+    const digits = digitsOnly(e164);
+    if (!digits || digits.length < 10 || digits.length > 15) {
+      throw new Error('Teléfono no válido (debe tener 10-15 dígitos)');
+    }
+
+    const newNumber = {
+      id: nextNumberId(businessId),
+      businessId,
+      displayName: trimmedDisplayName,
+      e164: `+${digits}`,
+      status: 'connected',
+    };
+
+    state.phoneNumbers.push(newNumber);
+    return clone(newNumber);
+  }
+
+  async function updateNumber(id, changes) {
+    const idx = state.phoneNumbers.findIndex(n => n.id === id);
+    if (idx === -1) throw new Error('Número no encontrado');
+
+    const allowedFields = ['displayName', 'e164'];
+    const newNumber = { ...state.phoneNumbers[idx] };
+
+    for (const field of allowedFields) {
+      if (changes[field] !== undefined) {
+        if (field === 'displayName') {
+          const trimmed = changes.displayName?.trim?.() ?? '';
+          if (!trimmed) throw new Error('Nombre para mostrar requerido');
+          newNumber.displayName = trimmed;
+        }
+        if (field === 'e164') {
+          const digits = digitsOnly(changes.e164);
+          if (!digits || digits.length < 10 || digits.length > 15) {
+            throw new Error('Teléfono no válido (debe tener 10-15 dígitos)');
+          }
+          newNumber.e164 = `+${digits}`;
+        }
+      }
+    }
+
+    state.phoneNumbers[idx] = newNumber;
+    return clone(newNumber);
+  }
+
+  async function deleteNumber(id) {
+    const idx = state.phoneNumbers.findIndex(n => n.id === id);
+    if (idx === -1) throw new Error('Número no encontrado');
+    state.phoneNumbers.splice(idx, 1);
+  }
+
+  // Source CRUD
+  async function updateSource(id, changes) {
+    const idx = state.sources.findIndex(s => s.id === id);
+    if (idx === -1) throw new Error('Fuente no encontrada');
+
+    const allowedFields = ['title', 'origin', 'kind', 'enabled', 'charCount'];
+    const newSource = { ...state.sources[idx] };
+
+    for (const field of allowedFields) {
+      if (changes[field] !== undefined) {
+        if (field === 'title') {
+          const trimmed = changes.title?.trim?.() ?? '';
+          if (!trimmed) throw new Error('Título requerido');
+          if (trimmed.length > 200) throw new Error('Título excede 200 caracteres');
+          newSource.title = trimmed;
+        }
+        if (field === 'origin') {
+          const trimmed = changes.origin?.trim?.() ?? '';
+          if (!trimmed) throw new Error('Origen requerido');
+          // Validate origin against kind (current or new)
+          const kind = changes.kind ?? newSource.kind;
+          const validation = validateSourceInput(kind, { title: newSource.title, origin: trimmed });
+          if (!validation.valid) throw new Error(validation.error);
+          newSource.origin = trimmed;
+        }
+        if (field === 'kind') {
+          if (!SOURCE_KINDS.includes(changes.kind)) throw new Error('Tipo de fuente no válido');
+          // Validate current origin against new kind
+          const validation = validateSourceInput(changes.kind, { title: newSource.title, origin: newSource.origin });
+          if (!validation.valid) throw new Error(validation.error);
+          newSource.kind = changes.kind;
+        }
+        if (field === 'enabled') {
+          if (typeof changes.enabled !== 'boolean') throw new Error('Valor no válido para enabled');
+          newSource.enabled = changes.enabled;
+        }
+        if (field === 'charCount') {
+          if (!Number.isInteger(changes.charCount) || changes.charCount < 0) {
+            throw new Error('Tamaño no válido (debe ser entero ≥ 0)');
+          }
+          newSource.charCount = changes.charCount;
+        }
+      }
+    }
+
+    newSource.updatedAt = now();
+    state.sources[idx] = newSource;
+    return clone(newSource);
   }
 
   async function saveNotificationSettings(changes) {
@@ -283,5 +459,14 @@ export function createMockService({ now = () => new Date() } = {}) {
     toggleSource,
     deleteSource,
     saveNotificationSettings,
+    // Business CRUD
+    updateBusiness,
+    deleteBusiness,
+    // Phone Number CRUD
+    addNumber,
+    updateNumber,
+    deleteNumber,
+    // Source CRUD
+    updateSource,
   };
 }

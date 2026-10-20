@@ -1,6 +1,12 @@
+import { renderConversationList } from './conversationList.js';
+import { renderConversationDetail as renderConversationDetailComponent } from './conversationDetail.js';
+import { renderBusinessList } from './businessList.js';
+import { renderBusinessDetail } from './businessDetail.js';
+import { renderSourceList } from './sourceList.js';
+
 /**
- * Renderiza la pantalla de Conversaciones.
- * @param {Object} state - Estado actual { currentHash: string }
+ * Renderiza la pantalla de Conversaciones con lista completa.
+ * @param {Object} state - Estado actual
  * @returns {HTMLElement} Sección de conversaciones
  */
 export function renderConversations(state) {
@@ -8,20 +14,15 @@ export function renderConversations(state) {
   section.id = 'conversaciones';
   section.className = 'screen screen--conversaciones';
 
-  const h1 = document.createElement('h1');
-  h1.textContent = 'Conversaciones';
-  section.appendChild(h1);
-
-  const p = document.createElement('p');
-  p.textContent = 'Próximamente';
-  section.appendChild(p);
+  // La lista completa va aquí
+  section.appendChild(renderConversationList(state));
 
   return section;
 }
 
 /**
- * Renderiza la pantalla de Negocios.
- * @param {Object} state - Estado actual { currentHash: string }
+ * Renderiza la pantalla de Negocios (lista).
+ * @param {Object} state - Estado actual { businessColors: Object }
  * @returns {HTMLElement} Sección de negocios
  */
 export function renderBusinesses(state) {
@@ -29,13 +30,27 @@ export function renderBusinesses(state) {
   section.id = 'negocios';
   section.className = 'screen screen--negocios';
 
-  const h1 = document.createElement('h1');
-  h1.textContent = 'Negocios';
-  section.appendChild(h1);
+  section.appendChild(renderBusinessList(state));
 
-  const p = document.createElement('p');
-  p.textContent = 'Próximamente';
-  section.appendChild(p);
+  return section;
+}
+
+/**
+ * Renderiza el detalle de un negocio.
+ * @param {Object} state - Estado actual { currentBusiness, businessNumbers, businessColors }
+ * @returns {HTMLElement} Sección de detalle de negocio
+ */
+export function renderBusinessDetailScreen(state) {
+  const section = document.createElement('section');
+  section.id = 'negocios';
+  section.className = 'screen screen--negocios';
+
+  const businessId = state.currentBusinessId;
+  if (businessId) {
+    section.appendChild(renderBusinessDetail(state, businessId));
+  } else {
+    section.appendChild(renderBusinessList(state));
+  }
 
   return section;
 }
@@ -62,22 +77,25 @@ export function renderSettings(state) {
 }
 
 /**
+ * Renderiza la pantalla de Fuentes.
+ * @param {Object} state - Estado actual
+ * @returns {HTMLElement} Sección de fuentes
+ */
+export function renderSources(state) {
+  const section = document.createElement('section');
+  section.id = 'fuentes';
+  section.className = 'screen screen--fuentes';
+
+  section.appendChild(renderSourceList(state));
+
+  return section;
+}
+
+/**
  * Renderiza la zona de detalle de conversación.
- * @param {Object} state - Estado actual { currentHash: string }
+ * @param {Object} state - Estado actual { currentConversation, messages, businessColors }
  * @returns {HTMLElement} Sección de detalle
  */
 export function renderConversationDetail(state) {
-  const aside = document.createElement('aside');
-  aside.id = 'conversation-detail';
-  aside.className = 'screen screen--detail';
-
-  const h1 = document.createElement('h1');
-  h1.textContent = 'Conversación';
-  aside.appendChild(h1);
-
-  const p = document.createElement('p');
-  p.textContent = 'Próximamente';
-  aside.appendChild(p);
-
-  return aside;
+  return renderConversationDetailComponent(state);
 }
