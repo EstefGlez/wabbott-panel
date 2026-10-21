@@ -546,7 +546,7 @@ export function openSourceModal({ businessId, source, onSubmit }) {
   // const previewContainer ya definida arriba
   // const previewBox ya definida arriba
   // const charCountEl ya definida arriba como charCountSpan
-  const fileHint = dialog.querySelector('#file-hint');
+  // const fileHint ya definido arriba (creado programáticamente en línea ~396)
   // const generalError ya definida arriba
   // const cancelBtn ya definida arriba
   // const submitBtn ya definida arriba
