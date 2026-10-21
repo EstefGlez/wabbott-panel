@@ -21,80 +21,176 @@ export function openBusinessModal({ business, existingNames = [], onSubmit }) {
   // Título del modal
   const title = isEditing ? 'Editar negocio' : 'Nuevo negocio';
 
-  dialog.innerHTML = `
-    <header class="dialog__header">
-      <h2 id="business-modal-title" class="dialog__title">${title}</h2>
-      <button type="button" class="dialog__close" aria-label="Cerrar">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </header>
-    <form class="modal-form" method="dialog">
-      <div class="dialog__content">
-        <!-- Campo: Nombre -->
-        <div class="modal-form__field">
-          <label for="business-name" class="modal-form__label">Nombre del negocio</label>
-          <input
-            type="text"
-            id="business-name"
-            name="name"
-            class="modal-form__input"
-            placeholder="Ej. Mi Empresa"
-            value="${business?.name || ''}"
-            maxlength="100"
-            required
-            autocomplete="off"
-            autofocus
-          >
-          <p class="modal-form__error" id="business-name-error" aria-live="polite"></p>
-        </div>
+  // Build dialog content programmatically
+  // Header
+  const header = document.createElement('header');
+  header.className = 'dialog__header';
 
-        <!-- Campo: Color (paleta) -->
-        <div class="modal-form__field">
-          <label class="modal-form__label">Color del badge</label>
-          <fieldset class="color-palette" aria-label="Seleccionar color del negocio">
-            ${BUSINESS_COLOR_PALETTE.map((color, index) => `
-              <div class="color-palette__item">
-                <input
-                  type="radio"
-                  name="color"
-                  id="color-${index}"
-                  class="color-palette__input"
-                  value="${color}"
-                  ${business?.color === color || (!isEditing && index === 0) ? 'checked' : ''}
-                  aria-label="Color ${getColorName(color)}"
-                >
-                <label for="color-${index}" class="color-palette__swatch" style="--biz-color: ${color};" aria-hidden="true">
-                  <span class="color-palette__initial" style="--biz-color: ${color};">${isEditing ? getBusinessInitial(business.name) : getBusinessInitial('Nuevo')}</span>
-                </label>
-              </div>
-            `).join('')}
-          </fieldset>
-          <p class="modal-form__error" id="business-color-error" aria-live="polite"></p>
-        </div>
-      </div>
+  const h2 = document.createElement('h2');
+  h2.id = 'business-modal-title';
+  h2.className = 'dialog__title';
+  h2.textContent = title;
+  header.appendChild(h2);
 
-      <footer class="dialog__footer">
-        <button type="button" class="dialog__btn dialog__btn--secondary" data-action="cancel">
-          Cancelar
-        </button>
-        <button type="submit" class="dialog__btn dialog__btn--primary" data-action="submit">
-          ${isEditing ? 'Guardar cambios' : 'Crear negocio'}
-        </button>
-      </footer>
-    </form>
-  `;
+  const closeBtn = document.createElement('button');
+  closeBtn.type = 'button';
+  closeBtn.className = 'dialog__close';
+  closeBtn.setAttribute('aria-label', 'Cerrar');
 
-  // Referencias a elementos
-  const form = dialog.querySelector('form');
-  const nameInput = dialog.querySelector('#business-name');
-  const nameError = dialog.querySelector('#business-name-error');
-  const colorError = dialog.querySelector('#business-color-error');
-  const cancelBtn = dialog.querySelector('[data-action="cancel"]');
-  const submitBtn = dialog.querySelector('[data-action="submit"]');
-  const closeBtn = dialog.querySelector('.dialog__close');
+  const closeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  closeSvg.setAttribute('width', '20');
+  closeSvg.setAttribute('height', '20');
+  closeSvg.setAttribute('viewBox', '0 0 24 24');
+  closeSvg.setAttribute('fill', 'none');
+  closeSvg.setAttribute('stroke', 'currentColor');
+  closeSvg.setAttribute('stroke-width', '2');
+  closeSvg.setAttribute('stroke-linecap', 'round');
+  closeSvg.setAttribute('stroke-linejoin', 'round');
+  closeSvg.setAttribute('aria-hidden', 'true');
+
+  const closeLine1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  closeLine1.setAttribute('x1', '18');
+  closeLine1.setAttribute('y1', '6');
+  closeLine1.setAttribute('x2', '6');
+  closeLine1.setAttribute('y2', '18');
+  closeSvg.appendChild(closeLine1);
+
+  const closeLine2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  closeLine2.setAttribute('x1', '6');
+  closeLine2.setAttribute('y1', '6');
+  closeLine2.setAttribute('x2', '18');
+  closeLine2.setAttribute('y2', '18');
+  closeSvg.appendChild(closeLine2);
+
+  closeBtn.appendChild(closeSvg);
+  header.appendChild(closeBtn);
+  dialog.appendChild(header);
+
+  // Form
+  const form = document.createElement('form');
+  form.className = 'modal-form';
+  form.setAttribute('method', 'dialog');
+
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'dialog__content';
+
+  // Name field
+  const nameField = document.createElement('div');
+  nameField.className = 'modal-form__field';
+
+  const nameLabel = document.createElement('label');
+  nameLabel.className = 'modal-form__label';
+  nameLabel.setAttribute('for', 'business-name');
+  nameLabel.textContent = 'Nombre del negocio';
+  nameField.appendChild(nameLabel);
+
+  const nameInput = document.createElement('input');
+  nameInput.type = 'text';
+  nameInput.id = 'business-name';
+  nameInput.name = 'name';
+  nameInput.className = 'modal-form__input';
+  nameInput.placeholder = 'Ej. Mi Empresa';
+  nameInput.value = business?.name || '';
+  nameInput.maxLength = 100;
+  nameInput.required = true;
+  nameInput.autocomplete = 'off';
+  nameInput.autofocus = true;
+  nameField.appendChild(nameInput);
+
+  const nameError = document.createElement('p');
+  nameError.className = 'modal-form__error';
+  nameError.id = 'business-name-error';
+  nameError.setAttribute('aria-live', 'polite');
+  nameField.appendChild(nameError);
+
+  contentDiv.appendChild(nameField);
+
+  // Color palette field
+  const colorField = document.createElement('div');
+  colorField.className = 'modal-form__field';
+
+  const colorLabel = document.createElement('label');
+  colorLabel.className = 'modal-form__label';
+  colorLabel.textContent = 'Color del badge';
+  colorField.appendChild(colorLabel);
+
+  const colorFieldset = document.createElement('fieldset');
+  colorFieldset.className = 'color-palette';
+  colorFieldset.setAttribute('aria-label', 'Seleccionar color del negocio');
+
+  for (const [index, color] of BUSINESS_COLOR_PALETTE.entries()) {
+    const item = document.createElement('div');
+    item.className = 'color-palette__item';
+
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = 'color';
+    input.id = `color-${index}`;
+    input.className = 'color-palette__input';
+    input.value = color;
+    if (business?.color === color || (!isEditing && index === 0)) {
+      input.checked = true;
+    }
+    input.setAttribute('aria-label', `Color ${getColorName(color)}`);
+    item.appendChild(input);
+
+    const label = document.createElement('label');
+    label.setAttribute('for', `color-${index}`);
+    label.className = 'color-palette__swatch';
+    label.style.setProperty('--biz-color', color);
+    label.setAttribute('aria-hidden', 'true');
+
+    const initial = document.createElement('span');
+    initial.className = 'color-palette__initial';
+    initial.style.setProperty('--biz-color', color);
+    initial.textContent = isEditing ? getBusinessInitial(business.name) : getBusinessInitial('Nuevo');
+    label.appendChild(initial);
+
+    item.appendChild(label);
+    colorFieldset.appendChild(item);
+  }
+
+  colorField.appendChild(colorFieldset);
+
+  const colorError = document.createElement('p');
+  colorError.className = 'modal-form__error';
+  colorError.id = 'business-color-error';
+  colorError.setAttribute('aria-live', 'polite');
+  colorField.appendChild(colorError);
+
+  contentDiv.appendChild(colorField);
+
+  form.appendChild(contentDiv);
+
+  // Footer
+  const footer = document.createElement('footer');
+  footer.className = 'dialog__footer';
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.type = 'button';
+  cancelBtn.className = 'dialog__btn dialog__btn--secondary';
+  cancelBtn.setAttribute('data-action', 'cancel');
+  cancelBtn.textContent = 'Cancelar';
+  footer.appendChild(cancelBtn);
+
+  const submitBtn = document.createElement('button');
+  submitBtn.type = 'submit';
+  submitBtn.className = 'dialog__btn dialog__btn--primary';
+  submitBtn.setAttribute('data-action', 'submit');
+  submitBtn.textContent = isEditing ? 'Guardar cambios' : 'Crear negocio';
+  footer.appendChild(submitBtn);
+
+  form.appendChild(footer);
+  dialog.appendChild(form);
+
+  // Referencias a elementos (ya creados arriba, usamos las variables directamente)
+  // const form = dialog.querySelector('form'); // ya tenemos 'form'
+  // const nameInput ya definido arriba
+  // const nameError ya definido arriba
+  // const colorError ya definido arriba
+  // const cancelBtn ya definido arriba
+  // const submitBtn ya definido arriba
+  // const closeBtn ya definido arriba
 
   // Validación en tiempo real del nombre
   let nameValidationTimer = null;

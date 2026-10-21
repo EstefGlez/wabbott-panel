@@ -7,7 +7,7 @@ import { DESTINATIONS, parseHash, isActive } from '../domain/navigation.js';
  */
 export function renderNav(state) {
   const nav = document.getElementById('nav');
-  nav.innerHTML = '';
+  nav.textContent = '';
 
   const ul = document.createElement('ul');
   ul.className = 'nav-list';

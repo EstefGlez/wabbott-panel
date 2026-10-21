@@ -259,42 +259,42 @@
   white-space: nowrap;
 }
 
-.window-banner--open {
+.window-banner--green {
   background: var(--color-success-light);
   border-bottom: 1px solid var(--color-success);
 }
 
-.window-banner--open .window-banner__icon {
+.window-banner--green .window-banner__icon {
   color: var(--color-success);
 }
 
-.window-banner--open .window-banner__text {
+.window-banner--green .window-banner__text {
   color: var(--color-success-dark);
 }
 
-.window-banner--warning {
+.window-banner--amber {
   background: var(--color-warning-light);
   border-bottom: 1px solid var(--color-warning);
 }
 
-.window-banner--warning .window-banner__icon {
+.window-banner--amber .window-banner__icon {
   color: var(--color-warning);
 }
 
-.window-banner--warning .window-banner__text {
+.window-banner--amber .window-banner__text {
   color: var(--color-warning-dark);
 }
 
-.window-banner--urgent {
+.window-banner--red {
   background: var(--color-danger-light);
   border-bottom: 1px solid var(--color-danger);
 }
 
-.window-banner--urgent .window-banner__icon {
+.window-banner--red .window-banner__icon {
   color: var(--color-danger);
 }
 
-.window-banner--urgent .window-banner__text {
+.window-banner--red .window-banner__text {
   color: var(--color-danger-dark);
 }
 

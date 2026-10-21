@@ -85,212 +85,475 @@ export function openSourceModal({ businessId, source, onSubmit }) {
 
   const title = isEditing ? 'Editar fuente' : 'Agregar fuente';
 
-  dialog.innerHTML = `
-    <header class="dialog__header">
-      <h2 id="source-modal-title" class="dialog__title">${title}</h2>
-      <button type="button" class="dialog__close" aria-label="Cerrar">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </header>
-    <form class="modal-form" method="dialog">
-      <div class="dialog__content">
-        <!-- Tabs de navegación -->
-        <nav class="source-tabs" role="tablist" aria-label="Tipo de fuente">
-          <button type="button" role="tab" aria-selected="true" data-tab="url" class="source-tab source-tab--active" aria-controls="panel-url">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
-            <span>Enlace</span>
-          </button>
-          <button type="button" role="tab" aria-selected="false" data-tab="file" class="source-tab" aria-controls="panel-file">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-              <polyline points="10 9 9 9 8 9"></polyline>
-            </svg>
-            <span>Archivo</span>
-          </button>
-          <button type="button" role="tab" aria-selected="false" data-tab="text" class="source-tab" aria-controls="panel-text">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-              <polyline points="10 9 9 9 8 9"></polyline>
-            </svg>
-            <span>Texto pegado</span>
-          </button>
-        </nav>
+  // Build the dialog content programmatically to avoid innerHTML
+  // Header
+  const header = document.createElement('header');
+  header.className = 'dialog__header';
 
-        <!-- Panel: Enlace -->
-        <div role="tabpanel" id="panel-url" class="source-panel source-panel--active" data-tab="url">
-          <div class="modal-form__field">
-            <label for="source-title-url" class="modal-form__label">Título</label>
-            <input
-              type="text"
-              id="source-title-url"
-              name="title"
-              class="modal-form__input"
-              placeholder="Ej. Documentación oficial"
-              value="${source?.title || ''}"
-              maxlength="200"
-              required
-              autocomplete="off"
-              ${isEditing ? '' : 'autofocus'}
-            >
-            <p class="modal-form__error" id="source-title-url-error" aria-live="polite"></p>
-          </div>
+  const h2 = document.createElement('h2');
+  h2.id = 'source-modal-title';
+  h2.className = 'dialog__title';
+  h2.textContent = title;
+  header.appendChild(h2);
 
-          <div class="modal-form__field">
-            <label for="source-origin-url" class="modal-form__label">URL</label>
-            <input
-              type="url"
-              id="source-origin-url"
-              name="origin"
-              class="modal-form__input"
-              placeholder="https://ejemplo.com/documento"
-              value="${source?.origin || ''}"
-              maxlength="500"
-              required
-              autocomplete="url"
-            >
-            <p class="modal-form__hint">Debe ser una URL válida (https://...)</p>
-            <p class="modal-form__error" id="source-origin-url-error" aria-live="polite"></p>
-          </div>
-        </div>
+  const closeBtn = document.createElement('button');
+  closeBtn.type = 'button';
+  closeBtn.className = 'dialog__close';
+  closeBtn.setAttribute('aria-label', 'Cerrar');
 
-        <!-- Panel: Archivo -->
-        <div role="tabpanel" id="panel-file" class="source-panel" data-tab="file" hidden>
-          <div class="modal-form__field">
-            <label for="source-title-file" class="modal-form__label">Título</label>
-            <input
-              type="text"
-              id="source-title-file"
-              name="title"
-              class="modal-form__input"
-              placeholder="Ej. Manual de usuario"
-              value="${source?.title || ''}"
-              maxlength="200"
-              required
-              autocomplete="off"
-            >
-            <p class="modal-form__error" id="source-title-file-error" aria-live="polite"></p>
-          </div>
+  const closeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  closeSvg.setAttribute('width', '20');
+  closeSvg.setAttribute('height', '20');
+  closeSvg.setAttribute('viewBox', '0 0 24 24');
+  closeSvg.setAttribute('fill', 'none');
+  closeSvg.setAttribute('stroke', 'currentColor');
+  closeSvg.setAttribute('stroke-width', '2');
+  closeSvg.setAttribute('stroke-linecap', 'round');
+  closeSvg.setAttribute('stroke-linejoin', 'round');
+  closeSvg.setAttribute('aria-hidden', 'true');
 
-          <div class="modal-form__field">
-            <label class="modal-form__label">Tipo de archivo</label>
-            <fieldset class="file-kind-group" aria-label="Seleccionar tipo de archivo">
-              ${['pdf', 'md', 'txt', 'text'].map(kind => `
-                <label class="file-kind-option">
-                  <input
-                    type="radio"
-                    name="file-kind"
-                    value="${kind}"
-                    class="file-kind-input"
-                    ${fileKind === kind ? 'checked' : ''}
-                    aria-label="${getFileKindLabel(kind)}"
-                  >
-                  <span class="file-kind-label">${getFileKindLabel(kind)}</span>
-                </label>
-              `).join('')}
-            </fieldset>
-            <p class="modal-form__error" id="source-file-kind-error" aria-live="polite"></p>
-          </div>
+  const closeLine1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  closeLine1.setAttribute('x1', '18');
+  closeLine1.setAttribute('y1', '6');
+  closeLine1.setAttribute('x2', '6');
+  closeLine1.setAttribute('y2', '18');
+  closeSvg.appendChild(closeLine1);
 
-          <div class="modal-form__field">
-            <label for="source-origin-file" class="modal-form__label">Nombre del archivo</label>
-            <input
-              type="text"
-              id="source-origin-file"
-              name="origin"
-              class="modal-form__input"
-              placeholder="Ej. manual.pdf, notas.md, datos.txt"
-              value="${source?.origin || ''}"
-              maxlength="200"
-              required
-              autocomplete="off"
-            >
-            <p class="modal-form__hint" id="file-hint">Extensiones permitidas: .pdf</p>
-            <p class="modal-form__error" id="source-origin-file-error" aria-live="polite"></p>
-          </div>
-        </div>
+  const closeLine2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  closeLine2.setAttribute('x1', '6');
+  closeLine2.setAttribute('y1', '6');
+  closeLine2.setAttribute('x2', '18');
+  closeLine2.setAttribute('y2', '18');
+  closeSvg.appendChild(closeLine2);
 
-        <!-- Panel: Texto pegado -->
-        <div role="tabpanel" id="panel-text" class="source-panel" data-tab="text" hidden>
-          <div class="modal-form__field">
-            <label for="source-title-text" class="modal-form__label">Título</label>
-            <input
-              type="text"
-              id="source-title-text"
-              name="title"
-              class="modal-form__input"
-              placeholder="Ej. Notas internas"
-              value="${source?.title || ''}"
-              maxlength="200"
-              required
-              autocomplete="off"
-            >
-            <p class="modal-form__error" id="source-title-text-error" aria-live="polite"></p>
-          </div>
+  closeBtn.appendChild(closeSvg);
+  header.appendChild(closeBtn);
+  dialog.appendChild(header);
 
-          <div class="modal-form__field">
-            <label for="source-content-text" class="modal-form__label">Contenido</label>
-            <textarea
-              id="source-content-text"
-              name="content"
-              class="modal-form__textarea"
-              placeholder="Pega aquí el contenido de la fuente..."
-              rows="8"
-              required
-              autocomplete="off"
-            >${source?.previewText || ''}</textarea>
-            <p class="modal-form__hint">
-              <span id="char-count">0</span> caracteres (máx. 50000)
-            </p>
-            <p class="modal-form__error" id="source-content-text-error" aria-live="polite"></p>
-          </div>
-        </div>
+  // Form
+  const form = document.createElement('form');
+  form.className = 'modal-form';
+  form.setAttribute('method', 'dialog');
 
-        <!-- Preview (solo para texto pegado) -->
-        <div class="source-preview-container" id="source-preview-container" hidden>
-          <label class="modal-form__label">Vista previa</label>
-          <div class="source-preview-box" id="source-preview-box"></div>
-        </div>
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'dialog__content';
 
-        <!-- Error general -->
-        <p class="modal-form__error modal-form__error--general" id="source-general-error" aria-live="polite" style="display: none;"></p>
-      </div>
+  // Tabs navigation
+  const tabsNav = document.createElement('nav');
+  tabsNav.className = 'source-tabs';
+  tabsNav.setAttribute('role', 'tablist');
+  tabsNav.setAttribute('aria-label', 'Tipo de fuente');
 
-      <footer class="dialog__footer">
-        <button type="button" class="dialog__btn dialog__btn--secondary" data-action="cancel">
-          Cancelar
-        </button>
-        <button type="submit" class="dialog__btn dialog__btn--primary" data-action="submit" disabled>
-          ${isEditing ? 'Guardar cambios' : 'Agregar fuente'}
-        </button>
-      </footer>
-    </form>
-  `;
+  const tabs = [
+    { tab: 'url', label: 'Enlace', active: true, iconPath: 'M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6', iconPolyline: '15 3 21 3 21 9', iconLine: { x1: '10', y1: '14', x2: '21', y2: '3' } },
+    { tab: 'file', label: 'Archivo', active: false, iconPath: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z', iconPolyline: '14 2 14 8 20 8', iconLines: [{ x1: '16', y1: '13', x2: '8', y2: '13' }, { x1: '16', y1: '17', x2: '8', y2: '17' }], iconPolyline2: '10 9 9 9 8 9' },
+    { tab: 'text', label: 'Texto pegado', active: false, iconPath: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z', iconPolyline: '14 2 14 8 20 8', iconLines: [{ x1: '16', y1: '13', x2: '8', y2: '13' }, { x1: '16', y1: '17', x2: '8', y2: '17' }], iconPolyline2: '10 9 9 9 8 9' },
+  ];
 
-  // Referencias a elementos
-  const form = dialog.querySelector('form');
+  for (const tab of tabs) {
+    const tabBtn = document.createElement('button');
+    tabBtn.type = 'button';
+    tabBtn.setAttribute('role', 'tab');
+    tabBtn.setAttribute('aria-selected', tab.active);
+    tabBtn.setAttribute('data-tab', tab.tab);
+    tabBtn.className = `source-tab${tab.active ? ' source-tab--active' : ''}`;
+    tabBtn.setAttribute('aria-controls', `panel-${tab.tab}`);
+
+    const tabSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    tabSvg.setAttribute('width', '18');
+    tabSvg.setAttribute('height', '18');
+    tabSvg.setAttribute('viewBox', '0 0 24 24');
+    tabSvg.setAttribute('fill', 'none');
+    tabSvg.setAttribute('stroke', 'currentColor');
+    tabSvg.setAttribute('stroke-width', '2');
+    tabSvg.setAttribute('stroke-linecap', 'round');
+    tabSvg.setAttribute('stroke-linejoin', 'round');
+    tabSvg.setAttribute('aria-hidden', 'true');
+
+    const tabPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    tabPath.setAttribute('d', tab.iconPath);
+    tabSvg.appendChild(tabPath);
+
+    if (tab.iconPolyline) {
+      const tabPolyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+      tabPolyline.setAttribute('points', tab.iconPolyline);
+      tabSvg.appendChild(tabPolyline);
+    }
+
+    if (tab.iconLine) {
+      const tabLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      tabLine.setAttribute('x1', tab.iconLine.x1);
+      tabLine.setAttribute('y1', tab.iconLine.y1);
+      tabLine.setAttribute('x2', tab.iconLine.x2);
+      tabLine.setAttribute('y2', tab.iconLine.y2);
+      tabSvg.appendChild(tabLine);
+    }
+
+    if (tab.iconLines) {
+      for (const line of tab.iconLines) {
+        const tabLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        tabLine.setAttribute('x1', line.x1);
+        tabLine.setAttribute('y1', line.y1);
+        tabLine.setAttribute('x2', line.x2);
+        tabLine.setAttribute('y2', line.y2);
+        tabSvg.appendChild(tabLine);
+      }
+    }
+
+    if (tab.iconPolyline2) {
+      const tabPolyline2 = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+      tabPolyline2.setAttribute('points', tab.iconPolyline2);
+      tabSvg.appendChild(tabPolyline2);
+    }
+
+    tabBtn.appendChild(tabSvg);
+    tabBtn.appendChild(document.createTextNode(` ${tab.label}`));
+    tabsNav.appendChild(tabBtn);
+  }
+
+  contentDiv.appendChild(tabsNav);
+
+  // Panel: Enlace
+  const panelUrl = document.createElement('div');
+  panelUrl.setAttribute('role', 'tabpanel');
+  panelUrl.id = 'panel-url';
+  panelUrl.className = 'source-panel source-panel--active';
+  panelUrl.setAttribute('data-tab', 'url');
+
+  // Title field for URL
+  const urlTitleField = document.createElement('div');
+  urlTitleField.className = 'modal-form__field';
+
+  const urlTitleLabel = document.createElement('label');
+  urlTitleLabel.className = 'modal-form__label';
+  urlTitleLabel.setAttribute('for', 'source-title-url');
+  urlTitleLabel.textContent = 'Título';
+  urlTitleField.appendChild(urlTitleLabel);
+
+  const urlTitleInput = document.createElement('input');
+  urlTitleInput.type = 'text';
+  urlTitleInput.id = 'source-title-url';
+  urlTitleInput.name = 'title';
+  urlTitleInput.className = 'modal-form__input';
+  urlTitleInput.placeholder = 'Ej. Documentación oficial';
+  urlTitleInput.value = source?.title || '';
+  urlTitleInput.maxLength = 200;
+  urlTitleInput.required = true;
+  urlTitleInput.autocomplete = 'off';
+  if (!isEditing) urlTitleInput.autofocus = true;
+  urlTitleField.appendChild(urlTitleInput);
+
+  const urlTitleError = document.createElement('p');
+  urlTitleError.className = 'modal-form__error';
+  urlTitleError.id = 'source-title-url-error';
+  urlTitleError.setAttribute('aria-live', 'polite');
+  urlTitleField.appendChild(urlTitleError);
+
+  panelUrl.appendChild(urlTitleField);
+
+  // Origin field for URL
+  const urlOriginField = document.createElement('div');
+  urlOriginField.className = 'modal-form__field';
+
+  const urlOriginLabel = document.createElement('label');
+  urlOriginLabel.className = 'modal-form__label';
+  urlOriginLabel.setAttribute('for', 'source-origin-url');
+  urlOriginLabel.textContent = 'URL';
+  urlOriginField.appendChild(urlOriginLabel);
+
+  const urlOriginInput = document.createElement('input');
+  urlOriginInput.type = 'url';
+  urlOriginInput.id = 'source-origin-url';
+  urlOriginInput.name = 'origin';
+  urlOriginInput.className = 'modal-form__input';
+  urlOriginInput.placeholder = 'https://ejemplo.com/documento';
+  urlOriginInput.value = source?.origin || '';
+  urlOriginInput.maxLength = 500;
+  urlOriginInput.required = true;
+  urlOriginInput.autocomplete = 'url';
+  urlOriginField.appendChild(urlOriginInput);
+
+  const urlHint = document.createElement('p');
+  urlHint.className = 'modal-form__hint';
+  urlHint.textContent = 'Debe ser una URL válida (https://...)';
+  urlOriginField.appendChild(urlHint);
+
+  const urlOriginError = document.createElement('p');
+  urlOriginError.className = 'modal-form__error';
+  urlOriginError.id = 'source-origin-url-error';
+  urlOriginError.setAttribute('aria-live', 'polite');
+  urlOriginField.appendChild(urlOriginError);
+
+  panelUrl.appendChild(urlOriginField);
+
+  contentDiv.appendChild(panelUrl);
+
+  // Panel: Archivo
+  const panelFile = document.createElement('div');
+  panelFile.setAttribute('role', 'tabpanel');
+  panelFile.id = 'panel-file';
+  panelFile.className = 'source-panel';
+  panelFile.setAttribute('data-tab', 'file');
+  panelFile.hidden = true;
+
+  // Title field for File
+  const fileTitleField = document.createElement('div');
+  fileTitleField.className = 'modal-form__field';
+
+  const fileTitleLabel = document.createElement('label');
+  fileTitleLabel.className = 'modal-form__label';
+  fileTitleLabel.setAttribute('for', 'source-title-file');
+  fileTitleLabel.textContent = 'Título';
+  fileTitleField.appendChild(fileTitleLabel);
+
+  const fileTitleInput = document.createElement('input');
+  fileTitleInput.type = 'text';
+  fileTitleInput.id = 'source-title-file';
+  fileTitleInput.name = 'title';
+  fileTitleInput.className = 'modal-form__input';
+  fileTitleInput.placeholder = 'Ej. Manual de usuario';
+  fileTitleInput.value = source?.title || '';
+  fileTitleInput.maxLength = 200;
+  fileTitleInput.required = true;
+  fileTitleInput.autocomplete = 'off';
+  fileTitleField.appendChild(fileTitleInput);
+
+  const fileTitleError = document.createElement('p');
+  fileTitleError.className = 'modal-form__error';
+  fileTitleError.id = 'source-title-file-error';
+  fileTitleError.setAttribute('aria-live', 'polite');
+  fileTitleField.appendChild(fileTitleError);
+
+  panelFile.appendChild(fileTitleField);
+
+  // File kind field
+  const fileKindField = document.createElement('div');
+  fileKindField.className = 'modal-form__field';
+
+  const fileKindLabel = document.createElement('label');
+  fileKindLabel.className = 'modal-form__label';
+  fileKindLabel.textContent = 'Tipo de archivo';
+  fileKindField.appendChild(fileKindLabel);
+
+  const fileKindFieldset = document.createElement('fieldset');
+  fileKindFieldset.className = 'file-kind-group';
+  fileKindFieldset.setAttribute('aria-label', 'Seleccionar tipo de archivo');
+
+  const fileKinds = ['pdf', 'md', 'txt', 'text'];
+  for (const kind of fileKinds) {
+    const label = document.createElement('label');
+    label.className = 'file-kind-option';
+
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = 'file-kind';
+    input.value = kind;
+    input.className = 'file-kind-input';
+    if (fileKind === kind) input.checked = true;
+    input.setAttribute('aria-label', getFileKindLabel(kind));
+    label.appendChild(input);
+
+    const span = document.createElement('span');
+    span.className = 'file-kind-label';
+    span.textContent = getFileKindLabel(kind);
+    label.appendChild(span);
+
+    fileKindFieldset.appendChild(label);
+  }
+
+  fileKindField.appendChild(fileKindFieldset);
+
+  const fileKindError = document.createElement('p');
+  fileKindError.className = 'modal-form__error';
+  fileKindError.id = 'source-file-kind-error';
+  fileKindError.setAttribute('aria-live', 'polite');
+  fileKindField.appendChild(fileKindError);
+
+  panelFile.appendChild(fileKindField);
+
+  // Origin field for File
+  const fileOriginField = document.createElement('div');
+  fileOriginField.className = 'modal-form__field';
+
+  const fileOriginLabel = document.createElement('label');
+  fileOriginLabel.className = 'modal-form__label';
+  fileOriginLabel.setAttribute('for', 'source-origin-file');
+  fileOriginLabel.textContent = 'Nombre del archivo';
+  fileOriginField.appendChild(fileOriginLabel);
+
+  const fileOriginInput = document.createElement('input');
+  fileOriginInput.type = 'text';
+  fileOriginInput.id = 'source-origin-file';
+  fileOriginInput.name = 'origin';
+  fileOriginInput.className = 'modal-form__input';
+  fileOriginInput.placeholder = 'Ej. manual.pdf, notas.md, datos.txt';
+  fileOriginInput.value = source?.origin || '';
+  fileOriginInput.maxLength = 200;
+  fileOriginInput.required = true;
+  fileOriginInput.autocomplete = 'off';
+  fileOriginField.appendChild(fileOriginInput);
+
+  const fileHint = document.createElement('p');
+  fileHint.className = 'modal-form__hint';
+  fileHint.id = 'file-hint';
+  fileHint.textContent = 'Extensiones permitidas: .pdf';
+  fileOriginField.appendChild(fileHint);
+
+  const fileOriginError = document.createElement('p');
+  fileOriginError.className = 'modal-form__error';
+  fileOriginError.id = 'source-origin-file-error';
+  fileOriginError.setAttribute('aria-live', 'polite');
+  fileOriginField.appendChild(fileOriginError);
+
+  panelFile.appendChild(fileOriginField);
+
+  contentDiv.appendChild(panelFile);
+
+  // Panel: Texto pegado
+  const panelText = document.createElement('div');
+  panelText.setAttribute('role', 'tabpanel');
+  panelText.id = 'panel-text';
+  panelText.className = 'source-panel';
+  panelText.setAttribute('data-tab', 'text');
+  panelText.hidden = true;
+
+  // Title field for Text
+  const textTitleField = document.createElement('div');
+  textTitleField.className = 'modal-form__field';
+
+  const textTitleLabel = document.createElement('label');
+  textTitleLabel.className = 'modal-form__label';
+  textTitleLabel.setAttribute('for', 'source-title-text');
+  textTitleLabel.textContent = 'Título';
+  textTitleField.appendChild(textTitleLabel);
+
+  const textTitleInput = document.createElement('input');
+  textTitleInput.type = 'text';
+  textTitleInput.id = 'source-title-text';
+  textTitleInput.name = 'title';
+  textTitleInput.className = 'modal-form__input';
+  textTitleInput.placeholder = 'Ej. Notas internas';
+  textTitleInput.value = source?.title || '';
+  textTitleInput.maxLength = 200;
+  textTitleInput.required = true;
+  textTitleInput.autocomplete = 'off';
+  textTitleField.appendChild(textTitleInput);
+
+  const textTitleError = document.createElement('p');
+  textTitleError.className = 'modal-form__error';
+  textTitleError.id = 'source-title-text-error';
+  textTitleError.setAttribute('aria-live', 'polite');
+  textTitleField.appendChild(textTitleError);
+
+  panelText.appendChild(textTitleField);
+
+  // Content field for Text
+  const textContentField = document.createElement('div');
+  textContentField.className = 'modal-form__field';
+
+  const textContentLabel = document.createElement('label');
+  textContentLabel.className = 'modal-form__label';
+  textContentLabel.setAttribute('for', 'source-content-text');
+  textContentLabel.textContent = 'Contenido';
+  textContentField.appendChild(textContentLabel);
+
+  const textContentArea = document.createElement('textarea');
+  textContentArea.id = 'source-content-text';
+  textContentArea.name = 'content';
+  textContentArea.className = 'modal-form__textarea';
+  textContentArea.placeholder = 'Pega aquí el contenido de la fuente...';
+  textContentArea.rows = 8;
+  textContentArea.required = true;
+  textContentArea.autocomplete = 'off';
+  textContentArea.value = source?.previewText || '';
+  textContentField.appendChild(textContentArea);
+
+  const charCountHint = document.createElement('p');
+  charCountHint.className = 'modal-form__hint';
+
+  const charCountSpan = document.createElement('span');
+  charCountSpan.id = 'char-count';
+  charCountSpan.textContent = '0';
+  charCountHint.appendChild(charCountSpan);
+
+  charCountHint.appendChild(document.createTextNode(' caracteres (máx. 50000)'));
+  textContentField.appendChild(charCountHint);
+
+  const textContentError = document.createElement('p');
+  textContentError.className = 'modal-form__error';
+  textContentError.id = 'source-content-text-error';
+  textContentError.setAttribute('aria-live', 'polite');
+  textContentField.appendChild(textContentError);
+
+  panelText.appendChild(textContentField);
+
+  contentDiv.appendChild(panelText);
+
+  // Preview container
+  const previewContainer = document.createElement('div');
+  previewContainer.className = 'source-preview-container';
+  previewContainer.id = 'source-preview-container';
+  previewContainer.hidden = true;
+
+  const previewLabel = document.createElement('label');
+  previewLabel.className = 'modal-form__label';
+  previewLabel.textContent = 'Vista previa';
+  previewContainer.appendChild(previewLabel);
+
+  const previewBox = document.createElement('div');
+  previewBox.className = 'source-preview-box';
+  previewBox.id = 'source-preview-box';
+  previewContainer.appendChild(previewBox);
+
+  contentDiv.appendChild(previewContainer);
+
+  // General error
+  const generalError = document.createElement('p');
+  generalError.className = 'modal-form__error modal-form__error--general';
+  generalError.id = 'source-general-error';
+  generalError.setAttribute('aria-live', 'polite');
+  generalError.style.display = 'none';
+  contentDiv.appendChild(generalError);
+
+  form.appendChild(contentDiv);
+
+  // Footer
+  const footer = document.createElement('footer');
+  footer.className = 'dialog__footer';
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.type = 'button';
+  cancelBtn.className = 'dialog__btn dialog__btn--secondary';
+  cancelBtn.setAttribute('data-action', 'cancel');
+  cancelBtn.textContent = 'Cancelar';
+  footer.appendChild(cancelBtn);
+
+  const submitBtn = document.createElement('button');
+  submitBtn.type = 'submit';
+  submitBtn.className = 'dialog__btn dialog__btn--primary';
+  submitBtn.setAttribute('data-action', 'submit');
+  submitBtn.disabled = true;
+  submitBtn.textContent = isEditing ? 'Guardar cambios' : 'Agregar fuente';
+  footer.appendChild(submitBtn);
+
+  form.appendChild(footer);
+  dialog.appendChild(form);
+
+  // Referencias a elementos (ya creados arriba, usamos las variables directamente)
+  // const form = dialog.querySelector('form'); // ya tenemos 'form'
   const tabButtons = dialog.querySelectorAll('.source-tab');
   const panels = dialog.querySelectorAll('.source-panel');
-  const previewContainer = dialog.querySelector('#source-preview-container');
-  const previewBox = dialog.querySelector('#source-preview-box');
-  const charCountEl = dialog.querySelector('#char-count');
+  // const previewContainer ya definida arriba
+  // const previewBox ya definida arriba
+  // const charCountEl ya definida arriba como charCountSpan
   const fileHint = dialog.querySelector('#file-hint');
-  const generalError = dialog.querySelector('#source-general-error');
-  const cancelBtn = dialog.querySelector('[data-action="cancel"]');
-  const submitBtn = dialog.querySelector('[data-action="submit"]');
-  const closeBtn = dialog.querySelector('.dialog__close');
+  // const generalError ya definida arriba
+  // const cancelBtn ya definida arriba
+  // const submitBtn ya definida arriba
+  // const closeBtn ya definida arriba
+
+  // Usar las variables ya creadas
+  const charCountEl = charCountSpan;
 
   // Inputs por pestaña
   const inputs = {

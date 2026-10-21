@@ -20,76 +20,158 @@ export function openNumberModal({ businessId, number, onSubmit }) {
 
   const title = isEditing ? 'Editar número' : 'Agregar número';
 
-  dialog.innerHTML = `
-    <header class="dialog__header">
-      <h2 id="number-modal-title" class="dialog__title">${title}</h2>
-      <button type="button" class="dialog__close" aria-label="Cerrar">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </header>
-    <form class="modal-form" method="dialog">
-      <div class="dialog__content">
-        <!-- Campo: Nombre para mostrar -->
-        <div class="modal-form__field">
-          <label for="number-display-name" class="modal-form__label">Nombre para mostrar</label>
-          <input
-            type="text"
-            id="number-display-name"
-            name="displayName"
-            class="modal-form__input"
-            placeholder="Ej. Línea principal, Soporte, Ventas"
-            value="${number?.displayName || ''}"
-            maxlength="50"
-            required
-            autocomplete="off"
-            autofocus
-          >
-          <p class="modal-form__error" id="number-display-name-error" aria-live="polite"></p>
-        </div>
+  // Build dialog content programmatically
+  // Header
+  const header = document.createElement('header');
+  header.className = 'dialog__header';
 
-        <!-- Campo: Número E.164 -->
-        <div class="modal-form__field">
-          <label for="number-e164" class="modal-form__label">Número de teléfono (formato E.164)</label>
-          <input
-            type="tel"
-            id="number-e164"
-            name="e164"
-            class="modal-form__input"
-            placeholder="+52 55 5555 0101"
-            value="${number?.e164 || ''}"
-            maxlength="20"
-            required
-            autocomplete="tel"
-            inputmode="tel"
-          >
-          <p class="modal-form__hint">Formato: +[código país] [número]. Ej: +52 55 5555 0101</p>
-          <p class="modal-form__error" id="number-e164-error" aria-live="polite"></p>
-        </div>
-      </div>
+  const h2 = document.createElement('h2');
+  h2.id = 'number-modal-title';
+  h2.className = 'dialog__title';
+  h2.textContent = title;
+  header.appendChild(h2);
 
-      <footer class="dialog__footer">
-        <button type="button" class="dialog__btn dialog__btn--secondary" data-action="cancel">
-          Cancelar
-        </button>
-        <button type="submit" class="dialog__btn dialog__btn--primary" data-action="submit">
-          ${isEditing ? 'Guardar cambios' : 'Agregar número'}
-        </button>
-      </footer>
-    </form>
-  `;
+  const closeBtn = document.createElement('button');
+  closeBtn.type = 'button';
+  closeBtn.className = 'dialog__close';
+  closeBtn.setAttribute('aria-label', 'Cerrar');
 
-  // Referencias a elementos
-  const form = dialog.querySelector('form');
-  const displayNameInput = dialog.querySelector('#number-display-name');
-  const displayNameError = dialog.querySelector('#number-display-name-error');
-  const e164Input = dialog.querySelector('#number-e164');
-  const e164Error = dialog.querySelector('#number-e164-error');
-  const cancelBtn = dialog.querySelector('[data-action="cancel"]');
-  const submitBtn = dialog.querySelector('[data-action="submit"]');
-  const closeBtn = dialog.querySelector('.dialog__close');
+  const closeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  closeSvg.setAttribute('width', '20');
+  closeSvg.setAttribute('height', '20');
+  closeSvg.setAttribute('viewBox', '0 0 24 24');
+  closeSvg.setAttribute('fill', 'none');
+  closeSvg.setAttribute('stroke', 'currentColor');
+  closeSvg.setAttribute('stroke-width', '2');
+  closeSvg.setAttribute('stroke-linecap', 'round');
+  closeSvg.setAttribute('stroke-linejoin', 'round');
+  closeSvg.setAttribute('aria-hidden', 'true');
+
+  const closeLine1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  closeLine1.setAttribute('x1', '18');
+  closeLine1.setAttribute('y1', '6');
+  closeLine1.setAttribute('x2', '6');
+  closeLine1.setAttribute('y2', '18');
+  closeSvg.appendChild(closeLine1);
+
+  const closeLine2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  closeLine2.setAttribute('x1', '6');
+  closeLine2.setAttribute('y1', '6');
+  closeLine2.setAttribute('x2', '18');
+  closeLine2.setAttribute('y2', '18');
+  closeSvg.appendChild(closeLine2);
+
+  closeBtn.appendChild(closeSvg);
+  header.appendChild(closeBtn);
+  dialog.appendChild(header);
+
+  // Form
+  const form = document.createElement('form');
+  form.className = 'modal-form';
+  form.setAttribute('method', 'dialog');
+
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'dialog__content';
+
+  // Display name field
+  const displayNameField = document.createElement('div');
+  displayNameField.className = 'modal-form__field';
+
+  const displayNameLabel = document.createElement('label');
+  displayNameLabel.className = 'modal-form__label';
+  displayNameLabel.setAttribute('for', 'number-display-name');
+  displayNameLabel.textContent = 'Nombre para mostrar';
+  displayNameField.appendChild(displayNameLabel);
+
+  const displayNameInput = document.createElement('input');
+  displayNameInput.type = 'text';
+  displayNameInput.id = 'number-display-name';
+  displayNameInput.name = 'displayName';
+  displayNameInput.className = 'modal-form__input';
+  displayNameInput.placeholder = 'Ej. Línea principal, Soporte, Ventas';
+  displayNameInput.value = number?.displayName || '';
+  displayNameInput.maxLength = 50;
+  displayNameInput.required = true;
+  displayNameInput.autocomplete = 'off';
+  displayNameInput.autofocus = true;
+  displayNameField.appendChild(displayNameInput);
+
+  const displayNameError = document.createElement('p');
+  displayNameError.className = 'modal-form__error';
+  displayNameError.id = 'number-display-name-error';
+  displayNameError.setAttribute('aria-live', 'polite');
+  displayNameField.appendChild(displayNameError);
+
+  contentDiv.appendChild(displayNameField);
+
+  // E.164 field
+  const e164Field = document.createElement('div');
+  e164Field.className = 'modal-form__field';
+
+  const e164Label = document.createElement('label');
+  e164Label.className = 'modal-form__label';
+  e164Label.setAttribute('for', 'number-e164');
+  e164Label.textContent = 'Número de teléfono (formato E.164)';
+  e164Field.appendChild(e164Label);
+
+  const e164Input = document.createElement('input');
+  e164Input.type = 'tel';
+  e164Input.id = 'number-e164';
+  e164Input.name = 'e164';
+  e164Input.className = 'modal-form__input';
+  e164Input.placeholder = '+52 55 5555 0101';
+  e164Input.value = number?.e164 || '';
+  e164Input.maxLength = 20;
+  e164Input.required = true;
+  e164Input.autocomplete = 'tel';
+  e164Input.inputMode = 'tel';
+  e164Field.appendChild(e164Input);
+
+  const e164Hint = document.createElement('p');
+  e164Hint.className = 'modal-form__hint';
+  e164Hint.textContent = 'Formato: +[código país] [número]. Ej: +52 55 5555 0101';
+  e164Field.appendChild(e164Hint);
+
+  const e164Error = document.createElement('p');
+  e164Error.className = 'modal-form__error';
+  e164Error.id = 'number-e164-error';
+  e164Error.setAttribute('aria-live', 'polite');
+  e164Field.appendChild(e164Error);
+
+  contentDiv.appendChild(e164Field);
+
+  form.appendChild(contentDiv);
+
+  // Footer
+  const footer = document.createElement('footer');
+  footer.className = 'dialog__footer';
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.type = 'button';
+  cancelBtn.className = 'dialog__btn dialog__btn--secondary';
+  cancelBtn.setAttribute('data-action', 'cancel');
+  cancelBtn.textContent = 'Cancelar';
+  footer.appendChild(cancelBtn);
+
+  const submitBtn = document.createElement('button');
+  submitBtn.type = 'submit';
+  submitBtn.className = 'dialog__btn dialog__btn--primary';
+  submitBtn.setAttribute('data-action', 'submit');
+  submitBtn.textContent = isEditing ? 'Guardar cambios' : 'Agregar número';
+  footer.appendChild(submitBtn);
+
+  form.appendChild(footer);
+  dialog.appendChild(form);
+
+  // Referencias a elementos (ya creados arriba, usamos las variables directamente)
+  // const form = dialog.querySelector('form'); // ya tenemos 'form'
+  // const displayNameInput ya definido arriba
+  // const displayNameError ya definido arriba
+  // const e164Input ya definido arriba
+  // const e164Error ya definido arriba
+  // const cancelBtn ya definido arriba
+  // const submitBtn ya definido arriba
+  // const closeBtn ya definido arriba
 
   // Formateo en vivo del número E.164
   e164Input.addEventListener('input', () => {

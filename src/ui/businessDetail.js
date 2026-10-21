@@ -46,13 +46,28 @@ export function renderBusinessDetail(state, businessId) {
   const editBtn = document.createElement('button');
   editBtn.type = 'button';
   editBtn.className = 'business-detail__edit-btn';
-  editBtn.innerHTML = `
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-    </svg>
-    Editar
-  `;
+
+  const editSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  editSvg.setAttribute('width', '16');
+  editSvg.setAttribute('height', '16');
+  editSvg.setAttribute('viewBox', '0 0 24 24');
+  editSvg.setAttribute('fill', 'none');
+  editSvg.setAttribute('stroke', 'currentColor');
+  editSvg.setAttribute('stroke-width', '2');
+  editSvg.setAttribute('stroke-linecap', 'round');
+  editSvg.setAttribute('stroke-linejoin', 'round');
+  editSvg.setAttribute('aria-hidden', 'true');
+
+  const editPath1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  editPath1.setAttribute('d', 'M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7');
+  editSvg.appendChild(editPath1);
+
+  const editPath2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  editPath2.setAttribute('d', 'M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z');
+  editSvg.appendChild(editPath2);
+
+  editBtn.appendChild(editSvg);
+  editBtn.appendChild(document.createTextNode(' Editar'));
   editBtn.setAttribute('aria-label', `Editar ${business.name}`);
   editBtn.addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('business:edit', { detail: { businessId: business.id } }));
@@ -66,27 +81,27 @@ export function renderBusinessDetail(state, businessId) {
   const meta = document.createElement('div');
   meta.className = 'business-detail__meta';
 
-  const idItem = document.createElement('div');
-  idItem.className = 'business-detail__meta-item';
-  idItem.innerHTML = `
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <rect x="2" y="2" width="20" height="20" rx="2"></rect>
-      <path d="M10 9h4"></path>
-      <path d="M10 15h4"></path>
-    </svg>
-    <span>ID: ${business.id}</span>
-  `;
-  meta.appendChild(idItem);
-
   if (numbers.length > 0) {
     const numbersItem = document.createElement('div');
     numbersItem.className = 'business-detail__meta-item';
-    numbersItem.innerHTML = `
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-      </svg>
-      <span>${numbers.length} número${numbers.length !== 1 ? 's' : ''}</span>
-    `;
+
+    const phoneSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    phoneSvg.setAttribute('width', '14');
+    phoneSvg.setAttribute('height', '14');
+    phoneSvg.setAttribute('viewBox', '0 0 24 24');
+    phoneSvg.setAttribute('fill', 'none');
+    phoneSvg.setAttribute('stroke', 'currentColor');
+    phoneSvg.setAttribute('stroke-width', '2');
+    phoneSvg.setAttribute('stroke-linecap', 'round');
+    phoneSvg.setAttribute('stroke-linejoin', 'round');
+    phoneSvg.setAttribute('aria-hidden', 'true');
+
+    const phonePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    phonePath.setAttribute('d', 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z');
+    phoneSvg.appendChild(phonePath);
+
+    numbersItem.appendChild(phoneSvg);
+    numbersItem.appendChild(document.createTextNode(` ${numbers.length} número${numbers.length !== 1 ? 's' : ''}`));
     meta.appendChild(numbersItem);
   }
 
@@ -110,13 +125,34 @@ export function renderBusinessDetail(state, businessId) {
   const addNumberBtn = document.createElement('button');
   addNumberBtn.type = 'button';
   addNumberBtn.className = 'business-detail__add-number-btn';
-  addNumberBtn.innerHTML = `
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <line x1="12" y1="5" x2="12" y2="19"></line>
-      <line x1="5" y1="12" x2="19" y2="12"></line>
-    </svg>
-    Agregar número
-  `;
+
+  const addNumberSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  addNumberSvg.setAttribute('width', '16');
+  addNumberSvg.setAttribute('height', '16');
+  addNumberSvg.setAttribute('viewBox', '0 0 24 24');
+  addNumberSvg.setAttribute('fill', 'none');
+  addNumberSvg.setAttribute('stroke', 'currentColor');
+  addNumberSvg.setAttribute('stroke-width', '2');
+  addNumberSvg.setAttribute('stroke-linecap', 'round');
+  addNumberSvg.setAttribute('stroke-linejoin', 'round');
+  addNumberSvg.setAttribute('aria-hidden', 'true');
+
+  const addLine1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  addLine1.setAttribute('x1', '12');
+  addLine1.setAttribute('y1', '5');
+  addLine1.setAttribute('x2', '12');
+  addLine1.setAttribute('y2', '19');
+  addNumberSvg.appendChild(addLine1);
+
+  const addLine2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  addLine2.setAttribute('x1', '5');
+  addLine2.setAttribute('y1', '12');
+  addLine2.setAttribute('x2', '19');
+  addLine2.setAttribute('y2', '12');
+  addNumberSvg.appendChild(addLine2);
+
+  addNumberBtn.appendChild(addNumberSvg);
+  addNumberBtn.appendChild(document.createTextNode(' Agregar número'));
   addNumberBtn.setAttribute('aria-label', 'Agregar número de WhatsApp');
   addNumberBtn.addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('number:create', { detail: { businessId: business.id } }));
@@ -132,12 +168,30 @@ export function renderBusinessDetail(state, businessId) {
   if (numbers.length === 0) {
     const empty = document.createElement('li');
     empty.className = 'business-detail__empty';
-    empty.innerHTML = `
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-bottom: var(--space-3); opacity: 0.5;">
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-      </svg>
-      <p>No hay números configurados</p>
-    `;
+
+    const emptySvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    emptySvg.setAttribute('width', '48');
+    emptySvg.setAttribute('height', '48');
+    emptySvg.setAttribute('viewBox', '0 0 24 24');
+    emptySvg.setAttribute('fill', 'none');
+    emptySvg.setAttribute('stroke', 'currentColor');
+    emptySvg.setAttribute('stroke-width', '1.5');
+    emptySvg.setAttribute('stroke-linecap', 'round');
+    emptySvg.setAttribute('stroke-linejoin', 'round');
+    emptySvg.setAttribute('aria-hidden', 'true');
+    emptySvg.style.marginBottom = 'var(--space-3)';
+    emptySvg.style.opacity = '0.5';
+
+    const emptyPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    emptyPath.setAttribute('d', 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z');
+    emptySvg.appendChild(emptyPath);
+
+    empty.appendChild(emptySvg);
+
+    const p = document.createElement('p');
+    p.textContent = 'No hay números configurados';
+    empty.appendChild(p);
+
     numbersList.appendChild(empty);
   } else {
     for (const number of numbers) {
@@ -152,14 +206,37 @@ export function renderBusinessDetail(state, businessId) {
   const sourcesLink = document.createElement('a');
   sourcesLink.href = `#/negocios/${business.id}/fuentes`;
   sourcesLink.className = 'business-detail__sources-link';
-  sourcesLink.innerHTML = `
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="10"></circle>
-      <line x1="2" y1="12" x2="22" y2="12"></line>
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-    </svg>
-    Gestionar fuentes de conocimiento
-  `;
+
+  const sourcesSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  sourcesSvg.setAttribute('width', '20');
+  sourcesSvg.setAttribute('height', '20');
+  sourcesSvg.setAttribute('viewBox', '0 0 24 24');
+  sourcesSvg.setAttribute('fill', 'none');
+  sourcesSvg.setAttribute('stroke', 'currentColor');
+  sourcesSvg.setAttribute('stroke-width', '2');
+  sourcesSvg.setAttribute('stroke-linecap', 'round');
+  sourcesSvg.setAttribute('stroke-linejoin', 'round');
+  sourcesSvg.setAttribute('aria-hidden', 'true');
+
+  const sourcesCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  sourcesCircle.setAttribute('cx', '12');
+  sourcesCircle.setAttribute('cy', '12');
+  sourcesCircle.setAttribute('r', '10');
+  sourcesSvg.appendChild(sourcesCircle);
+
+  const sourcesLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  sourcesLine.setAttribute('x1', '2');
+  sourcesLine.setAttribute('y1', '12');
+  sourcesLine.setAttribute('x2', '22');
+  sourcesLine.setAttribute('y2', '12');
+  sourcesSvg.appendChild(sourcesLine);
+
+  const sourcesPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  sourcesPath.setAttribute('d', 'M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z');
+  sourcesSvg.appendChild(sourcesPath);
+
+  sourcesLink.appendChild(sourcesSvg);
+  sourcesLink.appendChild(document.createTextNode(' Gestionar fuentes de conocimiento'));
   sourcesLink.setAttribute('aria-label', `Ver fuentes de conocimiento de ${business.name}`);
   section.appendChild(sourcesLink);
 
@@ -206,12 +283,27 @@ function renderBusinessNumber(number, businessId) {
   editBtn.type = 'button';
   editBtn.className = 'business-number__action';
   editBtn.setAttribute('aria-label', `Editar ${number.displayName}`);
-  editBtn.innerHTML = `
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-    </svg>
-  `;
+
+  const editSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  editSvg.setAttribute('width', '18');
+  editSvg.setAttribute('height', '18');
+  editSvg.setAttribute('viewBox', '0 0 24 24');
+  editSvg.setAttribute('fill', 'none');
+  editSvg.setAttribute('stroke', 'currentColor');
+  editSvg.setAttribute('stroke-width', '2');
+  editSvg.setAttribute('stroke-linecap', 'round');
+  editSvg.setAttribute('stroke-linejoin', 'round');
+  editSvg.setAttribute('aria-hidden', 'true');
+
+  const editPath1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  editPath1.setAttribute('d', 'M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7');
+  editSvg.appendChild(editPath1);
+
+  const editPath2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  editPath2.setAttribute('d', 'M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z');
+  editSvg.appendChild(editPath2);
+
+  editBtn.appendChild(editSvg);
   editBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     window.dispatchEvent(new CustomEvent('number:edit', { detail: { numberId: number.id, businessId } }));
@@ -222,12 +314,27 @@ function renderBusinessNumber(number, businessId) {
   deleteBtn.type = 'button';
   deleteBtn.className = 'business-number__action business-number__action--delete';
   deleteBtn.setAttribute('aria-label', `Eliminar ${number.displayName}`);
-  deleteBtn.innerHTML = `
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <polyline points="3 6 5 6 21 6"></polyline>
-      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-    </svg>
-  `;
+
+  const deleteSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  deleteSvg.setAttribute('width', '18');
+  deleteSvg.setAttribute('height', '18');
+  deleteSvg.setAttribute('viewBox', '0 0 24 24');
+  deleteSvg.setAttribute('fill', 'none');
+  deleteSvg.setAttribute('stroke', 'currentColor');
+  deleteSvg.setAttribute('stroke-width', '2');
+  deleteSvg.setAttribute('stroke-linecap', 'round');
+  deleteSvg.setAttribute('stroke-linejoin', 'round');
+  deleteSvg.setAttribute('aria-hidden', 'true');
+
+  const deletePolyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+  deletePolyline.setAttribute('points', '3 6 5 6 21 6');
+  deleteSvg.appendChild(deletePolyline);
+
+  const deletePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  deletePath.setAttribute('d', 'M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2');
+  deleteSvg.appendChild(deletePath);
+
+  deleteBtn.appendChild(deleteSvg);
   deleteBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     window.dispatchEvent(new CustomEvent('number:delete', { detail: { numberId: number.id, businessId } }));
@@ -247,13 +354,44 @@ function renderBusinessNumber(number, businessId) {
 function renderError(message) {
   const div = document.createElement('div');
   div.className = 'business-detail__error';
-  div.innerHTML = `
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-bottom: var(--space-3);">
-      <circle cx="12" cy="12" r="10"></circle>
-      <line x1="15" y1="9" x2="9" y2="15"></line>
-      <line x1="9" y1="9" x2="15" y2="15"></line>
-    </svg>
-    <p>${message}</p>
-  `;
+
+  const errorSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  errorSvg.setAttribute('width', '48');
+  errorSvg.setAttribute('height', '48');
+  errorSvg.setAttribute('viewBox', '0 0 24 24');
+  errorSvg.setAttribute('fill', 'none');
+  errorSvg.setAttribute('stroke', 'currentColor');
+  errorSvg.setAttribute('stroke-width', '1.5');
+  errorSvg.setAttribute('stroke-linecap', 'round');
+  errorSvg.setAttribute('stroke-linejoin', 'round');
+  errorSvg.setAttribute('aria-hidden', 'true');
+  errorSvg.style.marginBottom = 'var(--space-3)';
+
+  const errorCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  errorCircle.setAttribute('cx', '12');
+  errorCircle.setAttribute('cy', '12');
+  errorCircle.setAttribute('r', '10');
+  errorSvg.appendChild(errorCircle);
+
+  const errorLine1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  errorLine1.setAttribute('x1', '15');
+  errorLine1.setAttribute('y1', '9');
+  errorLine1.setAttribute('x2', '9');
+  errorLine1.setAttribute('y2', '15');
+  errorSvg.appendChild(errorLine1);
+
+  const errorLine2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  errorLine2.setAttribute('x1', '9');
+  errorLine2.setAttribute('y1', '9');
+  errorLine2.setAttribute('x2', '15');
+  errorLine2.setAttribute('y2', '15');
+  errorSvg.appendChild(errorLine2);
+
+  div.appendChild(errorSvg);
+
+  const p = document.createElement('p');
+  p.textContent = message;
+  div.appendChild(p);
+
   return div;
 }

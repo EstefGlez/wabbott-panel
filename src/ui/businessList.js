@@ -1,4 +1,5 @@
 import { BUSINESS_COLOR_PALETTE, getBusinessInitial } from '../domain/business.js';
+import { formatPhone } from '../domain/phone.js';
 
 /**
  * Renderiza la lista de negocios como tarjetas.
@@ -27,13 +28,34 @@ export function renderBusinessList(state) {
   const createBtn = document.createElement('button');
   createBtn.type = 'button';
   createBtn.className = 'business-list__create-btn';
-  createBtn.innerHTML = `
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <line x1="12" y1="5" x2="12" y2="19"></line>
-      <line x1="5" y1="12" x2="19" y2="12"></line>
-    </svg>
-    Nuevo negocio
-  `;
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('width', '20');
+  svg.setAttribute('height', '20');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '2');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+  svg.setAttribute('aria-hidden', 'true');
+
+  const line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  line1.setAttribute('x1', '12');
+  line1.setAttribute('y1', '5');
+  line1.setAttribute('x2', '12');
+  line1.setAttribute('y2', '19');
+  svg.appendChild(line1);
+
+  const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  line2.setAttribute('x1', '5');
+  line2.setAttribute('y1', '12');
+  line2.setAttribute('x2', '19');
+  line2.setAttribute('y2', '12');
+  svg.appendChild(line2);
+
+  createBtn.appendChild(svg);
+  createBtn.appendChild(document.createTextNode(' Nuevo negocio'));
   createBtn.setAttribute('aria-label', 'Crear nuevo negocio');
   createBtn.addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('business:create'));
@@ -59,11 +81,23 @@ export function renderBusinessList(state) {
     // Estado vacío
     const empty = document.createElement('div');
     empty.className = 'business-list__empty';
-    empty.innerHTML = `
-      <div class="business-list__empty-icon" aria-hidden="true">🏢</div>
-      <h2 class="business-list__empty-title">No hay negocios</h2>
-      <p class="business-list__empty-text">Crea tu primer negocio para empezar a gestionar conversaciones.</p>
-    `;
+
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'business-list__empty-icon';
+    iconDiv.setAttribute('aria-hidden', 'true');
+    iconDiv.textContent = '🏢';
+    empty.appendChild(iconDiv);
+
+    const title = document.createElement('h2');
+    title.className = 'business-list__empty-title';
+    title.textContent = 'No hay negocios';
+    empty.appendChild(title);
+
+    const text = document.createElement('p');
+    text.className = 'business-list__empty-text';
+    text.textContent = 'Crea tu primer negocio para empezar a gestionar conversaciones.';
+    empty.appendChild(text);
+
     empty.appendChild(createBtn.cloneNode(true));
     cardsContainer.appendChild(empty);
   } else {
@@ -139,10 +173,16 @@ function renderBusinessCard(business) {
     for (const number of business.numbers.slice(0, 3)) {
       const numBadge = document.createElement('span');
       numBadge.className = 'business-card__number';
-      numBadge.innerHTML = `
-        <span class="business-card__number-name">${number.displayName}</span>
-        <span>${number.e164}</span>
-      `;
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'business-card__number-name';
+      nameSpan.textContent = number.displayName;
+      numBadge.appendChild(nameSpan);
+
+      const phoneSpan = document.createElement('span');
+      phoneSpan.textContent = formatPhone(number.e164);
+      numBadge.appendChild(phoneSpan);
+
       numbersDiv.appendChild(numBadge);
     }
 
@@ -163,13 +203,28 @@ function renderBusinessCard(business) {
   const editBtn = document.createElement('button');
   editBtn.type = 'button';
   editBtn.className = 'business-card__action';
-  editBtn.innerHTML = `
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-    </svg>
-    Editar
-  `;
+
+  const editSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  editSvg.setAttribute('width', '16');
+  editSvg.setAttribute('height', '16');
+  editSvg.setAttribute('viewBox', '0 0 24 24');
+  editSvg.setAttribute('fill', 'none');
+  editSvg.setAttribute('stroke', 'currentColor');
+  editSvg.setAttribute('stroke-width', '2');
+  editSvg.setAttribute('stroke-linecap', 'round');
+  editSvg.setAttribute('stroke-linejoin', 'round');
+  editSvg.setAttribute('aria-hidden', 'true');
+
+  const editPath1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  editPath1.setAttribute('d', 'M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7');
+  editSvg.appendChild(editPath1);
+
+  const editPath2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  editPath2.setAttribute('d', 'M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z');
+  editSvg.appendChild(editPath2);
+
+  editBtn.appendChild(editSvg);
+  editBtn.appendChild(document.createTextNode(' Editar'));
   editBtn.setAttribute('aria-label', `Editar ${business.name}`);
   editBtn.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -180,14 +235,37 @@ function renderBusinessCard(business) {
   const sourcesBtn = document.createElement('button');
   sourcesBtn.type = 'button';
   sourcesBtn.className = 'business-card__action business-card__action--sources';
-  sourcesBtn.innerHTML = `
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="10"></circle>
-      <line x1="2" y1="12" x2="22" y2="12"></line>
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-    </svg>
-    Fuentes
-  `;
+
+  const sourcesSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  sourcesSvg.setAttribute('width', '16');
+  sourcesSvg.setAttribute('height', '16');
+  sourcesSvg.setAttribute('viewBox', '0 0 24 24');
+  sourcesSvg.setAttribute('fill', 'none');
+  sourcesSvg.setAttribute('stroke', 'currentColor');
+  sourcesSvg.setAttribute('stroke-width', '2');
+  sourcesSvg.setAttribute('stroke-linecap', 'round');
+  sourcesSvg.setAttribute('stroke-linejoin', 'round');
+  sourcesSvg.setAttribute('aria-hidden', 'true');
+
+  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  circle.setAttribute('cx', '12');
+  circle.setAttribute('cy', '12');
+  circle.setAttribute('r', '10');
+  sourcesSvg.appendChild(circle);
+
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  line.setAttribute('x1', '2');
+  line.setAttribute('y1', '12');
+  line.setAttribute('x2', '22');
+  line.setAttribute('y2', '12');
+  sourcesSvg.appendChild(line);
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', 'M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z');
+  sourcesSvg.appendChild(path);
+
+  sourcesBtn.appendChild(sourcesSvg);
+  sourcesBtn.appendChild(document.createTextNode(' Fuentes'));
   sourcesBtn.setAttribute('aria-label', `Ver fuentes de ${business.name}`);
   sourcesBtn.addEventListener('click', (e) => {
     e.stopPropagation();

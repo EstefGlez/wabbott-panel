@@ -71,4 +71,17 @@ button {
   cursor: pointer;
 }
 
+/* Visually hidden (accessible hiding) */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Contraste mínimo 4.5:1 garantizado por tokens */

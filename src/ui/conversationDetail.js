@@ -88,12 +88,20 @@ function renderConversationHeader(conversation, businessColors) {
     waBtn.target = '_blank';
     waBtn.rel = 'noopener noreferrer';
     waBtn.setAttribute('aria-label', `Abrir chat con ${conversation.customerName || conversation.customerPhone} en WhatsApp`);
-    waBtn.innerHTML = `
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004c-1.453 0-2.883-.907-3.336-1.727-.453-.818-.694-1.617-.718-1.734-.024-.117-.167-.272-.395-.42-.23-.147-.562-.412-.87-.782-.31-.37-.578-.823-.635-1.018-.06-.195.084-.385.27-.474.207-.099.518-.245.832-.443.288-.181.57-.385.85-.702.28-.325.524-.696.58-.947.057-.25.187-.507.273-.68.04-.075.183-.15.407-.24.224-.09.536-.19.73-.19h.034c.375 0 .76.013 1.116.074.356.06.69.2 1.007.372.317.173.6.395.85.672.25.277.425.62.49.887.065.268.088.49.065.658-.023.168-.176.314-.43.48-.253.166-.604.36-.866.504-.262.145-.57.27-.91.413-.339.143-.708.262-1.048.35-.34.087-.71.143-1.09.143h-.003zm0 0" />
-      </svg>
-      <span>WhatsApp</span>
-    `;
+
+    const waSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    waSvg.setAttribute('width', '20');
+    waSvg.setAttribute('height', '20');
+    waSvg.setAttribute('viewBox', '0 0 24 24');
+    waSvg.setAttribute('fill', 'currentColor');
+    waSvg.setAttribute('aria-hidden', 'true');
+
+    const waPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    waPath.setAttribute('d', 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004c-1.453 0-2.883-.907-3.336-1.727-.453-.818-.694-1.617-.718-1.734-.024-.117-.167-.272-.395-.42-.23-.147-.562-.412-.87-.782-.31-.37-.578-.823-.635-1.018-.06-.195.084-.385.27-.474.207-.099.518-.245.832-.443.288-.181.57-.385.85-.702.28-.325.524-.696.58-.947.057-.25.187-.507.273-.68.04-.075.183-.15.407-.24.224-.09.536-.19.73-.19h.034c.375 0 .76.013 1.116.074.356.06.69.2 1.007.372.317.173.6.395.85.672.25.277.425.62.49.887.065.268.088.49.065.658-.023.168-.176.314-.43.48-.253.166-.604.36-.866.504-.262.145-.57.27-.91.413-.339.143-.708.262-1.048.35-.34.087-.71.143-1.09.143h-.003zm0 0');
+    waSvg.appendChild(waPath);
+
+    waBtn.appendChild(waSvg);
+    waBtn.appendChild(document.createTextNode(' WhatsApp'));
     meta.appendChild(waBtn);
   }
 
@@ -125,14 +133,64 @@ function renderConversationHeader(conversation, businessColors) {
   toggleBtn.setAttribute('aria-label', 'Ver detalles de la conversación');
   toggleBtn.setAttribute('aria-expanded', 'false');
   toggleBtn.setAttribute('aria-controls', 'side-panel');
-  toggleBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 21h16"></path><path d="M4 12h16"></path><path d="M4 3h16"></path></svg>';
+
+  const toggleSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  toggleSvg.setAttribute('width', '24');
+  toggleSvg.setAttribute('height', '24');
+  toggleSvg.setAttribute('viewBox', '0 0 24 24');
+  toggleSvg.setAttribute('fill', 'none');
+  toggleSvg.setAttribute('stroke', 'currentColor');
+  toggleSvg.setAttribute('stroke-width', '2');
+  toggleSvg.setAttribute('aria-hidden', 'true');
+
+  const togglePath1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  togglePath1.setAttribute('d', 'M4 21h16');
+  toggleSvg.appendChild(togglePath1);
+
+  const togglePath2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  togglePath2.setAttribute('d', 'M4 12h16');
+  toggleSvg.appendChild(togglePath2);
+
+  const togglePath3 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  togglePath3.setAttribute('d', 'M4 3h16');
+  toggleSvg.appendChild(togglePath3);
+
+  toggleBtn.appendChild(toggleSvg);
   actions.appendChild(toggleBtn);
 
   // Menú de acciones (placeholder)
   const menuBtn = document.createElement('button');
   menuBtn.className = 'conversation-header__menu-btn';
   menuBtn.setAttribute('aria-label', 'Más acciones');
-  menuBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>';
+
+  const menuSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  menuSvg.setAttribute('width', '24');
+  menuSvg.setAttribute('height', '24');
+  menuSvg.setAttribute('viewBox', '0 0 24 24');
+  menuSvg.setAttribute('fill', 'none');
+  menuSvg.setAttribute('stroke', 'currentColor');
+  menuSvg.setAttribute('stroke-width', '2');
+  menuSvg.setAttribute('aria-hidden', 'true');
+
+  const menuCircle1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  menuCircle1.setAttribute('cx', '12');
+  menuCircle1.setAttribute('cy', '12');
+  menuCircle1.setAttribute('r', '1');
+  menuSvg.appendChild(menuCircle1);
+
+  const menuCircle2 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  menuCircle2.setAttribute('cx', '12');
+  menuCircle2.setAttribute('cy', '5');
+  menuCircle2.setAttribute('r', '1');
+  menuSvg.appendChild(menuCircle2);
+
+  const menuCircle3 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  menuCircle3.setAttribute('cx', '12');
+  menuCircle3.setAttribute('cy', '19');
+  menuCircle3.setAttribute('r', '1');
+  menuSvg.appendChild(menuCircle3);
+
+  menuBtn.appendChild(menuSvg);
   actions.appendChild(menuBtn);
   header.appendChild(actions);
 
@@ -173,16 +231,36 @@ function renderAttentionSwitch(conversation) {
     // Dialog de confirmación nativo
     const dialog = document.createElement('dialog');
     dialog.className = 'attention-switch__confirm-dialog';
-    dialog.innerHTML = `
-      <form method="dialog">
-        <h2>Devolver al bot</h2>
-        <p>La conversación volverá a ser atendida por el bot. ¿Confirmas?</p>
-        <div class="dialog-actions">
-          <button value="cancel" class="btn btn--secondary">Cancelar</button>
-          <button value="confirm" class="btn btn--danger" data-action="return-to-bot">Devolver</button>
-        </div>
-      </form>
-    `;
+
+    const form = document.createElement('form');
+    form.setAttribute('method', 'dialog');
+
+    const h2 = document.createElement('h2');
+    h2.textContent = 'Devolver al bot';
+    form.appendChild(h2);
+
+    const p = document.createElement('p');
+    p.textContent = 'La conversación volverá a ser atendida por el bot. ¿Confirmas?';
+    form.appendChild(p);
+
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'dialog-actions';
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.value = 'cancel';
+    cancelBtn.className = 'btn btn--secondary';
+    cancelBtn.textContent = 'Cancelar';
+    actionsDiv.appendChild(cancelBtn);
+
+    const confirmBtn = document.createElement('button');
+    confirmBtn.value = 'confirm';
+    confirmBtn.className = 'btn btn--danger';
+    confirmBtn.setAttribute('data-action', 'return-to-bot');
+    confirmBtn.textContent = 'Devolver';
+    actionsDiv.appendChild(confirmBtn);
+
+    form.appendChild(actionsDiv);
+    dialog.appendChild(form);
     div.appendChild(dialog);
 
     // Abrir dialog al click
@@ -227,15 +305,97 @@ function renderWindowBanner(conversation) {
   icon.className = 'window-banner__icon';
   icon.setAttribute('aria-hidden', 'true');
   // Iconos según estado
+  let iconSvg;
   if (status === 'closed') {
-    icon.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
-  } else if (status === 'urgent') {
-    icon.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>';
-  } else if (status === 'warning') {
-    icon.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+    iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    iconSvg.setAttribute('width', '20');
+    iconSvg.setAttribute('height', '20');
+    iconSvg.setAttribute('viewBox', '0 0 24 24');
+    iconSvg.setAttribute('fill', 'none');
+    iconSvg.setAttribute('stroke', 'currentColor');
+    iconSvg.setAttribute('stroke-width', '2');
+
+    const closedCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    closedCircle.setAttribute('cx', '12');
+    closedCircle.setAttribute('cy', '12');
+    closedCircle.setAttribute('r', '10');
+    iconSvg.appendChild(closedCircle);
+
+    const closedLine1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    closedLine1.setAttribute('x1', '15');
+    closedLine1.setAttribute('y1', '9');
+    closedLine1.setAttribute('x2', '9');
+    closedLine1.setAttribute('y2', '15');
+    iconSvg.appendChild(closedLine1);
+
+    const closedLine2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    closedLine2.setAttribute('x1', '9');
+    closedLine2.setAttribute('y1', '9');
+    closedLine2.setAttribute('x2', '15');
+    closedLine2.setAttribute('y2', '15');
+    iconSvg.appendChild(closedLine2);
+  } else if (status === 'red') {
+    iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    iconSvg.setAttribute('width', '20');
+    iconSvg.setAttribute('height', '20');
+    iconSvg.setAttribute('viewBox', '0 0 24 24');
+    iconSvg.setAttribute('fill', 'none');
+    iconSvg.setAttribute('stroke', 'currentColor');
+    iconSvg.setAttribute('stroke-width', '2');
+
+    const redCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    redCircle.setAttribute('cx', '12');
+    redCircle.setAttribute('cy', '12');
+    redCircle.setAttribute('r', '10');
+    iconSvg.appendChild(redCircle);
+
+    const redPolyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    redPolyline.setAttribute('points', '12 6 12 12 16 14');
+    iconSvg.appendChild(redPolyline);
+  } else if (status === 'amber') {
+    iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    iconSvg.setAttribute('width', '20');
+    iconSvg.setAttribute('height', '20');
+    iconSvg.setAttribute('viewBox', '0 0 24 24');
+    iconSvg.setAttribute('fill', 'none');
+    iconSvg.setAttribute('stroke', 'currentColor');
+    iconSvg.setAttribute('stroke-width', '2');
+
+    const amberPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    amberPath.setAttribute('d', 'M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z');
+    iconSvg.appendChild(amberPath);
+
+    const amberLine1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    amberLine1.setAttribute('x1', '12');
+    amberLine1.setAttribute('y1', '9');
+    amberLine1.setAttribute('x2', '12');
+    amberLine1.setAttribute('y2', '13');
+    iconSvg.appendChild(amberLine1);
+
+    const amberLine2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    amberLine2.setAttribute('x1', '12');
+    amberLine2.setAttribute('y1', '17');
+    amberLine2.setAttribute('x2', '12.01');
+    amberLine2.setAttribute('y2', '17');
+    iconSvg.appendChild(amberLine2);
   } else {
-    icon.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+    iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    iconSvg.setAttribute('width', '20');
+    iconSvg.setAttribute('height', '20');
+    iconSvg.setAttribute('viewBox', '0 0 24 24');
+    iconSvg.setAttribute('fill', 'none');
+    iconSvg.setAttribute('stroke', 'currentColor');
+    iconSvg.setAttribute('stroke-width', '2');
+
+    const greenPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    greenPath.setAttribute('d', 'M22 11.08V12a10 10 0 1 1-5.93-9.14');
+    iconSvg.appendChild(greenPath);
+
+    const greenPolyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    greenPolyline.setAttribute('points', '22 4 12 14.01 9 11.01');
+    iconSvg.appendChild(greenPolyline);
   }
+  icon.appendChild(iconSvg);
   content.appendChild(icon);
 
   const text = document.createElement('span');
@@ -295,25 +455,6 @@ function renderTimers(conversation) {
     }
   }
 
-  // Vuelve al bot (solo si humano y ventana abierta)
-  if (conversation.handler === 'human' && conversation.windowExpiresAt) {
-    const expiresMs = new Date(conversation.windowExpiresAt) - now;
-    if (expiresMs > 0) {
-      const hours = Math.floor(expiresMs / 3600000);
-      const mins = Math.floor((expiresMs % 3600000) / 60000);
-      let label;
-      if (hours > 0) {
-        label = `Vuelve al bot en ${hours}h ${mins}min`;
-      } else {
-        label = `Vuelve al bot en ${mins}min`;
-      }
-      timers.push({
-        label,
-        variant: 'return-bot',
-      });
-    }
-  }
-
   if (timers.length === 0) {
     return document.createElement('div'); // empty
   }
@@ -362,7 +503,11 @@ function renderMessageThread(messages, conversation) {
     const separator = document.createElement('div');
     separator.className = 'message-thread__date-separator';
     separator.setAttribute('aria-hidden', 'true');
-    separator.innerHTML = `<span>${dateLabel}</span>`;
+
+    const span = document.createElement('span');
+    span.textContent = dateLabel;
+    separator.appendChild(span);
+
     div.appendChild(separator);
 
     // Mensajes del grupo
@@ -416,7 +561,11 @@ function renderMessageBubble(message, conversation) {
       const status = document.createElement('span');
       status.className = `message-bubble__status message-bubble__status--${message.deliveryStatus}`;
       status.setAttribute('aria-label', `Estado: ${getDeliveryStatusLabel(message.deliveryStatus)}`);
-      status.innerHTML = getDeliveryStatusIcon(message.deliveryStatus);
+
+      const iconSvg = getDeliveryStatusIconSvg(message.deliveryStatus);
+      if (iconSvg) {
+        status.appendChild(iconSvg);
+      }
       meta.appendChild(status);
     }
 
@@ -444,18 +593,66 @@ function getDeliveryStatusLabel(status) {
 /**
  * Icono SVG para estado de entrega.
  * @param {string} status
- * @returns {string}
+ * @returns {SVGElement|null}
  */
-function getDeliveryStatusIcon(status) {
+function getDeliveryStatusIconSvg(status) {
   switch (status) {
-    case 'sent':
-      return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>';
-    case 'delivered':
-      return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 6 12 12 6 18"></polyline><polyline points="18 18 12 12 6 6"></polyline></svg>';
-    case 'read':
-      return '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 11.5c.64 1.52 1.77 2.83 3.26 3.81 1.03.71 2.3 1.13 3.74 1.13s2.71-.42 3.74-1.13c1.49-.98 2.62-2.29 3.26-3.81C21.27 7.61 17 4.5 12 4.5zm0 1.5c1.38 0 2.64.56 3.54 1.46.96.95 1.57 2.21 1.57 3.54 0 1.33-.61 2.59-1.57 3.54-.9.9-2.16 1.46-3.54 1.46-1.38 0-2.64-.56-3.54-1.46-.95-.96-1.57-2.21-1.57-3.54 0-1.33.61-2.59 1.57-3.54.9-.9 2.16-1.46 3.54-1.46z"/></svg>';
+    case 'sent': {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', '16');
+      svg.setAttribute('height', '16');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('fill', 'none');
+      svg.setAttribute('stroke', 'currentColor');
+      svg.setAttribute('stroke-width', '2');
+
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', '12');
+      line.setAttribute('y1', '5');
+      line.setAttribute('x2', '12');
+      line.setAttribute('y2', '19');
+      svg.appendChild(line);
+
+      const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+      polyline.setAttribute('points', '19 12 12 19 5 12');
+      svg.appendChild(polyline);
+
+      return svg;
+    }
+    case 'delivered': {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', '16');
+      svg.setAttribute('height', '16');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('fill', 'none');
+      svg.setAttribute('stroke', 'currentColor');
+      svg.setAttribute('stroke-width', '2');
+
+      const polyline1 = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+      polyline1.setAttribute('points', '18 6 12 12 6 18');
+      svg.appendChild(polyline1);
+
+      const polyline2 = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+      polyline2.setAttribute('points', '18 18 12 12 6 6');
+      svg.appendChild(polyline2);
+
+      return svg;
+    }
+    case 'read': {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', '16');
+      svg.setAttribute('height', '16');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('fill', 'currentColor');
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', 'M12 4.5C7 4.5 2.73 7.61 1 11.5c.64 1.52 1.77 2.83 3.26 3.81 1.03.71 2.3 1.13 3.74 1.13s2.71-.42 3.74-1.13c1.49-.98 2.62-2.29 3.26-3.81C21.27 7.61 17 4.5 12 4.5zm0 1.5c1.38 0 2.64.56 3.54 1.46.96.95 1.57 2.21 1.57 3.54 0 1.33-.61 2.59-1.57 3.54-.9.9-2.16 1.46-3.54 1.46-1.38 0-2.64-.56-3.54-1.46-.95-.96-1.57-2.21-1.57-3.54 0-1.33.61-2.59 1.57-3.54.9-.9 2.16-1.46 3.54-1.46z');
+      svg.appendChild(path);
+
+      return svg;
+    }
     default:
-      return '';
+      return null;
   }
 }
 
@@ -658,11 +855,12 @@ function renderSidePanel(conversation, businessColors) {
  */
 function getHandoffReasonLabel(reason) {
   const labels = {
-    'bot_timeout': 'Bot sin respuesta',
-    'customer_request': 'Cliente pidió asesor',
-    'complex_query': 'Consulta compleja',
-    'escalation': 'Escalación',
-    'human_intervention': 'Intervención humana',
+    venta: 'Venta',
+    envio: 'Envío',
+    queja: 'Queja',
+    devolucion: 'Devolución',
+    medico: 'Tema médico',
+    otro: 'Otro',
   };
   return labels[reason] || reason;
 }

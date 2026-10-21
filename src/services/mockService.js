@@ -32,6 +32,20 @@ export function createMockService({ now = () => new Date() } = {}) {
   // Helper para devolver copias
   const clone = (data) => structuredClone(data);
 
+  /**
+   * Obtiene el preview del último mensaje no de sistema para una conversación.
+   * @param {string} conversationId
+   * @returns {string|undefined}
+   */
+  function getLastMessagePreview(conversationId) {
+    const msgs = state.messages
+      .filter(m => m.conversationId === conversationId && m.author !== 'system')
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    if (msgs.length === 0) return undefined;
+    const body = msgs[0].body || '';
+    return body.length > 60 ? body.slice(0, 60) + '…' : body;
+  }
+
   // Contadores internos para IDs únicos
   let messageCounter = {};
   let sourceCounter = 0;
@@ -124,12 +138,26 @@ export function createMockService({ now = () => new Date() } = {}) {
       return b.lastCustomerMessageAt.getTime() - a.lastCustomerMessageAt.getTime(); // más reciente primero
     });
 
-    return clone(convs);
+    // Agregar lastMessagePreview a cada conversación
+    const result = convs.map(conv => {
+      const preview = getLastMessagePreview(conv.id);
+      if (preview !== undefined) {
+        return { ...conv, lastMessagePreview: preview };
+      }
+      return conv;
+    });
+
+    return clone(result);
   }
 
   async function getConversation(id) {
     const conv = state.conversations.find(c => c.id === id);
-    return conv ? clone(conv) : null;
+    if (!conv) return null;
+    const preview = getLastMessagePreview(id);
+    if (preview !== undefined) {
+      return clone({ ...conv, lastMessagePreview: preview });
+    }
+    return clone(conv);
   }
 
   async function listMessages(conversationId) {

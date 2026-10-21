@@ -194,7 +194,15 @@ function renderStatusFilters(state) {
     button.className = `status-filter status-filter--${s.key}${state.selectedStatus === s.key ? ' status-filter--active' : ''}`;
     button.dataset.status = s.key;
     button.setAttribute('aria-pressed', state.selectedStatus === s.key);
-    button.innerHTML = `${s.label} <span class="status-filter__count">${counts[s.key]}</span>`;
+
+    const labelSpan = document.createElement('span');
+    labelSpan.textContent = s.label;
+    button.appendChild(labelSpan);
+
+    const countSpan = document.createElement('span');
+    countSpan.className = 'status-filter__count';
+    countSpan.textContent = counts[s.key];
+    button.appendChild(countSpan);
 
     button.addEventListener('click', () => {
       state.selectedStatus = s.key;
@@ -228,7 +236,7 @@ function renderSearchInput(state) {
   input.type = 'search';
   input.id = 'conversation-search';
   input.className = 'conversation-search__input';
-  input.placeholder = 'Buscar nombre, teléfono, mensaje...';
+  input.placeholder = 'Buscar nombre o teléfono...';
   input.value = state.searchQuery || '';
   input.setAttribute('aria-label', 'Buscar conversaciones');
 
@@ -273,13 +281,17 @@ export function renderConversationRow(conversation, businessColors) {
     }
   });
 
-  // Punto de no leídos
+  // Punto de no leídos (siempre renderizado para mantener alineación)
+  const dot = document.createElement('span');
+  dot.className = 'conversation-row__unread';
   if (conversation.unreadCount > 0) {
-    const dot = document.createElement('span');
-    dot.className = 'conversation-row__unread';
     dot.setAttribute('aria-label', `${conversation.unreadCount} mensajes sin leer`);
-    li.appendChild(dot);
+    dot.classList.remove('conversation-row__unread--hidden');
+  } else {
+    dot.setAttribute('aria-hidden', 'true');
+    dot.classList.add('conversation-row__unread--hidden');
   }
+  li.appendChild(dot);
 
   // Nombre o teléfono enmascarado
   const nameDiv = document.createElement('div');

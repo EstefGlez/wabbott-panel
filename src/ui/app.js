@@ -117,7 +117,7 @@ function renderAll() {
 function renderScreen(state) {
   const destination = parseHash(state.currentHash);
   const app = document.getElementById('app');
-  app.innerHTML = '';
+  app.textContent = '';
 
   switch (destination) {
     case 'conversaciones':

@@ -24,13 +24,34 @@ export function renderSourceList(state) {
   backBtn.className = 'source-list__back-btn';
   backBtn.setAttribute('type', 'button');
   backBtn.setAttribute('aria-label', 'Volver al detalle del negocio');
-  backBtn.innerHTML = `
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <line x1="19" y1="12" x2="5" y2="12"></line>
-      <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-    <span class="source-list__back-text">Volver</span>
-  `;
+
+  const backSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  backSvg.setAttribute('width', '20');
+  backSvg.setAttribute('height', '20');
+  backSvg.setAttribute('viewBox', '0 0 24 24');
+  backSvg.setAttribute('fill', 'none');
+  backSvg.setAttribute('stroke', 'currentColor');
+  backSvg.setAttribute('stroke-width', '2');
+  backSvg.setAttribute('stroke-linecap', 'round');
+  backSvg.setAttribute('stroke-linejoin', 'round');
+  backSvg.setAttribute('aria-hidden', 'true');
+
+  const backLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  backLine.setAttribute('x1', '19');
+  backLine.setAttribute('y1', '12');
+  backLine.setAttribute('x2', '5');
+  backLine.setAttribute('y2', '12');
+  backSvg.appendChild(backLine);
+
+  const backPolyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+  backPolyline.setAttribute('points', '12 19 5 12 12 5');
+  backSvg.appendChild(backPolyline);
+
+  backBtn.appendChild(backSvg);
+  const backText = document.createElement('span');
+  backText.className = 'source-list__back-text';
+  backText.textContent = 'Volver';
+  backBtn.appendChild(backText);
   backBtn.addEventListener('click', () => {
     window.location.hash = `#/negocios/${currentBusinessId}`;
   });
@@ -51,13 +72,36 @@ export function renderSourceList(state) {
   addBtn.className = 'source-list__add-btn';
   addBtn.setAttribute('type', 'button');
   addBtn.setAttribute('data-action', 'add-source');
-  addBtn.innerHTML = `
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <line x1="12" y1="5" x2="12" y2="19"></line>
-      <line x1="5" y1="12" x2="19" y2="12"></line>
-    </svg>
-    <span>Agregar fuente</span>
-  `;
+
+  const addSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  addSvg.setAttribute('width', '20');
+  addSvg.setAttribute('height', '20');
+  addSvg.setAttribute('viewBox', '0 0 24 24');
+  addSvg.setAttribute('fill', 'none');
+  addSvg.setAttribute('stroke', 'currentColor');
+  addSvg.setAttribute('stroke-width', '2');
+  addSvg.setAttribute('stroke-linecap', 'round');
+  addSvg.setAttribute('stroke-linejoin', 'round');
+  addSvg.setAttribute('aria-hidden', 'true');
+
+  const addLine1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  addLine1.setAttribute('x1', '12');
+  addLine1.setAttribute('y1', '5');
+  addLine1.setAttribute('x2', '12');
+  addLine1.setAttribute('y2', '19');
+  addSvg.appendChild(addLine1);
+
+  const addLine2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  addLine2.setAttribute('x1', '5');
+  addLine2.setAttribute('y1', '12');
+  addLine2.setAttribute('x2', '19');
+  addLine2.setAttribute('y2', '12');
+  addSvg.appendChild(addLine2);
+
+  addBtn.appendChild(addSvg);
+  const addText = document.createElement('span');
+  addText.textContent = 'Agregar fuente';
+  addBtn.appendChild(addText);
   addBtn.addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('source:create', {
       detail: { businessId: currentBusinessId },
@@ -193,14 +237,23 @@ function renderSourceTable(sources) {
   const header = document.createElement('div');
   header.className = 'source-table__header';
   header.setAttribute('role', 'row');
-  header.innerHTML = `
-    <div class="source-table__cell source-table__cell--kind" role="columnheader">Tipo</div>
-    <div class="source-table__cell source-table__cell--title" role="columnheader">Título</div>
-    <div class="source-table__cell source-table__cell--status" role="columnheader">Estado</div>
-    <div class="source-table__cell source-table__cell--chars" role="columnheader">Tamaño</div>
-    <div class="source-table__cell source-table__cell--enabled" role="columnheader">Activo</div>
-    <div class="source-table__cell source-table__cell--actions" role="columnheader">Acciones</div>
-  `;
+
+    const headerCells = [
+      { class: 'source-table__cell source-table__cell--kind', text: 'Tipo' },
+      { class: 'source-table__cell source-table__cell--title', text: 'Título' },
+      { class: 'source-table__cell source-table__cell--status', text: 'Estado' },
+      { class: 'source-table__cell source-table__cell--chars', text: 'Tamaño' },
+      { class: 'source-table__cell source-table__cell--enabled', text: 'Activo' },
+      { class: 'source-table__cell source-table__cell--actions', text: 'Acciones' },
+    ];
+
+    for (const cell of headerCells) {
+      const div = document.createElement('div');
+      div.className = cell.class;
+      div.setAttribute('role', 'columnheader');
+      div.textContent = cell.text;
+      header.appendChild(div);
+    }
 
   const body = document.createElement('div');
   body.className = 'source-table__body';
@@ -231,17 +284,35 @@ function renderSourceRow(source) {
   const kindCell = document.createElement('div');
   kindCell.className = 'source-table__cell source-table__cell--kind';
   kindCell.setAttribute('role', 'cell');
-  kindCell.innerHTML = `<span class="source-kind" aria-label="${getSourceKindIcon(source.kind)}">${getSourceKindIcon(source.kind)}</span>`;
+
+  const kindSpan = document.createElement('span');
+  kindSpan.className = 'source-kind';
+  const icon = getSourceKindIcon(source.kind);
+  kindSpan.setAttribute('aria-label', icon);
+  kindSpan.textContent = icon;
+  kindCell.appendChild(kindSpan);
 
   // Celda: Título y origen
   const titleCell = document.createElement('div');
   titleCell.className = 'source-table__cell source-table__cell--title';
   titleCell.setAttribute('role', 'cell');
-  titleCell.innerHTML = `
-    <div class="source-title">${escapeHtml(source.title)}</div>
-    <div class="source-origin">${escapeHtml(source.origin)}</div>
-    ${source.previewText ? `<div class="source-preview">${escapeHtml(truncatePreview(source.previewText, 150))}</div>` : ''}
-  `;
+
+  const titleDiv = document.createElement('div');
+  titleDiv.className = 'source-title';
+  titleDiv.textContent = source.title;
+  titleCell.appendChild(titleDiv);
+
+  const originDiv = document.createElement('div');
+  originDiv.className = 'source-origin';
+  originDiv.textContent = source.origin;
+  titleCell.appendChild(originDiv);
+
+  if (source.previewText) {
+    const previewDiv = document.createElement('div');
+    previewDiv.className = 'source-preview';
+    previewDiv.textContent = truncatePreview(source.previewText, 150);
+    titleCell.appendChild(previewDiv);
+  }
 
   // Celda: Estado
   const statusCell = document.createElement('div');
@@ -253,11 +324,13 @@ function renderSourceRow(source) {
     processing: 'Procesando',
     error: 'Error',
   };
-  statusCell.innerHTML = `
-    <span class="status-badge ${statusClass}" aria-label="Estado: ${statusLabels[source.status] || source.status}">
-      ${statusLabels[source.status] || source.status}
-    </span>
-  `;
+
+  const statusBadge = document.createElement('span');
+  statusBadge.className = `status-badge ${statusClass}`;
+  const statusLabel = statusLabels[source.status] || source.status;
+  statusBadge.setAttribute('aria-label', `Estado: ${statusLabel}`);
+  statusBadge.textContent = statusLabel;
+  statusCell.appendChild(statusBadge);
 
   // Celda: Tamaño
   const charsCell = document.createElement('div');
@@ -269,33 +342,96 @@ function renderSourceRow(source) {
   const enabledCell = document.createElement('div');
   enabledCell.className = 'source-table__cell source-table__cell--enabled';
   enabledCell.setAttribute('role', 'cell');
-  enabledCell.innerHTML = `
-    <label class="toggle" aria-label="${source.enabled ? 'Desactivar' : 'Activar'} fuente">
-      <input type="checkbox" class="toggle__input" data-action="toggle-source" data-source-id="${source.id}" ${source.enabled ? 'checked' : ''}>
-      <span class="toggle__slider"></span>
-    </label>
-  `;
+
+  const toggleLabel = document.createElement('label');
+  toggleLabel.className = 'toggle';
+  toggleLabel.setAttribute('aria-label', `${source.enabled ? 'Desactivar' : 'Activar'} fuente`);
+
+  const toggleInput = document.createElement('input');
+  toggleInput.type = 'checkbox';
+  toggleInput.className = 'toggle__input';
+  toggleInput.setAttribute('data-action', 'toggle-source');
+  toggleInput.setAttribute('data-source-id', source.id);
+  if (source.enabled) {
+    toggleInput.checked = true;
+  }
+  toggleLabel.appendChild(toggleInput);
+
+  const toggleSlider = document.createElement('span');
+  toggleSlider.className = 'toggle__slider';
+  toggleLabel.appendChild(toggleSlider);
+
+  enabledCell.appendChild(toggleLabel);
 
   // Celda: Acciones
   const actionsCell = document.createElement('div');
   actionsCell.className = 'source-table__cell source-table__cell--actions';
   actionsCell.setAttribute('role', 'cell');
-  actionsCell.innerHTML = `
-    <div class="source-actions">
-      <button type="button" class="source-action source-action--edit" data-action="edit-source" data-source-id="${source.id}" aria-label="Editar fuente">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-        </svg>
-      </button>
-      <button type="button" class="source-action source-action--delete" data-action="delete-source" data-source-id="${source.id}" aria-label="Eliminar fuente">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="3 6 5 6 21 6"></polyline>
-          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-        </svg>
-      </button>
-    </div>
-  `;
+
+  const actionsDiv = document.createElement('div');
+  actionsDiv.className = 'source-actions';
+
+  // Edit button
+  const editBtn = document.createElement('button');
+  editBtn.type = 'button';
+  editBtn.className = 'source-action source-action--edit';
+  editBtn.setAttribute('data-action', 'edit-source');
+  editBtn.setAttribute('data-source-id', source.id);
+  editBtn.setAttribute('aria-label', 'Editar fuente');
+
+  const editSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  editSvg.setAttribute('width', '18');
+  editSvg.setAttribute('height', '18');
+  editSvg.setAttribute('viewBox', '0 0 24 24');
+  editSvg.setAttribute('fill', 'none');
+  editSvg.setAttribute('stroke', 'currentColor');
+  editSvg.setAttribute('stroke-width', '2');
+  editSvg.setAttribute('stroke-linecap', 'round');
+  editSvg.setAttribute('stroke-linejoin', 'round');
+  editSvg.setAttribute('aria-hidden', 'true');
+
+  const editPath1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  editPath1.setAttribute('d', 'M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7');
+  editSvg.appendChild(editPath1);
+
+  const editPath2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  editPath2.setAttribute('d', 'M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z');
+  editSvg.appendChild(editPath2);
+
+  editBtn.appendChild(editSvg);
+  actionsDiv.appendChild(editBtn);
+
+  // Delete button
+  const deleteBtn = document.createElement('button');
+  deleteBtn.type = 'button';
+  deleteBtn.className = 'source-action source-action--delete';
+  deleteBtn.setAttribute('data-action', 'delete-source');
+  deleteBtn.setAttribute('data-source-id', source.id);
+  deleteBtn.setAttribute('aria-label', 'Eliminar fuente');
+
+  const deleteSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  deleteSvg.setAttribute('width', '18');
+  deleteSvg.setAttribute('height', '18');
+  deleteSvg.setAttribute('viewBox', '0 0 24 24');
+  deleteSvg.setAttribute('fill', 'none');
+  deleteSvg.setAttribute('stroke', 'currentColor');
+  deleteSvg.setAttribute('stroke-width', '2');
+  deleteSvg.setAttribute('stroke-linecap', 'round');
+  deleteSvg.setAttribute('stroke-linejoin', 'round');
+  deleteSvg.setAttribute('aria-hidden', 'true');
+
+  const deletePolyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+  deletePolyline.setAttribute('points', '3 6 5 6 21 6');
+  deleteSvg.appendChild(deletePolyline);
+
+  const deletePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  deletePath.setAttribute('d', 'M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2');
+  deleteSvg.appendChild(deletePath);
+
+  deleteBtn.appendChild(deleteSvg);
+  actionsDiv.appendChild(deleteBtn);
+
+  actionsCell.appendChild(actionsDiv);
 
   row.appendChild(kindCell);
   row.appendChild(titleCell);
@@ -314,21 +450,22 @@ function renderSourceRow(source) {
 function renderEmptyState() {
   const empty = document.createElement('div');
   empty.className = 'source-list__empty';
-  empty.innerHTML = `
-    <div class="source-list__empty-icon">📚</div>
-    <h2 class="source-list__empty-title">Sin fuentes de conocimiento</h2>
-    <p class="source-list__empty-text">Agrega tu primera fuente para que el asistente pueda responder con información de tu negocio.</p>
-  `;
+
+  const iconDiv = document.createElement('div');
+  iconDiv.className = 'source-list__empty-icon';
+  iconDiv.textContent = '📚';
+  empty.appendChild(iconDiv);
+
+  const title = document.createElement('h2');
+  title.className = 'source-list__empty-title';
+  title.textContent = 'Sin fuentes de conocimiento';
+  empty.appendChild(title);
+
+  const text = document.createElement('p');
+  text.className = 'source-list__empty-text';
+  text.textContent = 'Agrega tu primera fuente para que el asistente pueda responder con información de tu negocio.';
+  empty.appendChild(text);
+
   return empty;
 }
 
-/**
- * Escapa HTML para prevenir XSS.
- * @param {string} text
- * @returns {string}
- */
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}

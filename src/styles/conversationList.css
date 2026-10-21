@@ -208,6 +208,10 @@
   flex-shrink: 0;
 }
 
+.conversation-row__unread--hidden {
+  visibility: hidden;
+}
+
 /* Nombre / teléfono enmascarado */
 .conversation-row__name {
   grid-area: name;
