@@ -1,0 +1,320 @@
+.settings {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.settings-title {
+  margin: 0 0 24px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #111827);
+}
+
+.settings-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 12px;
+}
+
+.settings-section-title {
+  margin: 0 0 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #111827);
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.settings-field:last-child {
+  margin-bottom: 0;
+}
+
+.settings-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary, #374151);
+}
+
+.settings-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  font-size: 1rem; /* 16px evita zoom en iOS */
+  font-family: inherit;
+  color: var(--color-text-primary, #111827);
+  background-color: var(--color-bg-input, #ffffff);
+  border: 1px solid var(--color-border, #d1d5db);
+  border-radius: 8px;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.settings-input:focus {
+  outline: none;
+  border-color: var(--color-primary, #2563eb);
+  box-shadow: 0 0 0 3px var(--color-primary-focus, rgba(37, 99, 235, 0.2));
+}
+
+.settings-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--color-bg-disabled, #f3f4f6);
+}
+
+.settings-input::placeholder {
+  color: var(--color-text-muted, #9ca3af);
+}
+
+.settings-hint {
+  font-size: 0.75rem;
+  color: var(--color-text-muted, #9ca3af);
+}
+
+/* Toggle switch accesible */
+.settings-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-toggle-label {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.settings-toggle-label--full {
+  justify-content: space-between;
+}
+
+.settings-toggle-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.settings-toggle-info strong {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-primary, #111827);
+  line-height: 1.3;
+}
+
+.settings-toggle-info small {
+  font-size: 0.75rem;
+  color: var(--color-text-muted, #9ca3af);
+  line-height: 1.3;
+}
+
+.settings-toggle-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  width: 48px;
+  height: 28px;
+}
+
+.settings-toggle {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.settings-toggle-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 48px;
+  height: 28px;
+  background-color: var(--color-toggle-off-bg, #d1d5db);
+  border-radius: 14px;
+  transition: background-color 0.15s ease;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.settings-toggle-slider::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  background-color: var(--color-toggle-thumb, #ffffff);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease;
+}
+
+.settings-toggle:checked + .settings-toggle-slider {
+  background-color: var(--color-primary, #2563eb);
+}
+
+.settings-toggle:checked + .settings-toggle-slider::before {
+  transform: translateX(20px);
+}
+
+.settings-toggle:focus-visible + .settings-toggle-slider {
+  box-shadow: 0 0 0 3px var(--color-primary-focus, rgba(37, 99, 235, 0.4));
+}
+
+.settings-toggle:disabled + .settings-toggle-slider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Horario de silencio */
+.settings-quiet-times {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.settings-input--time {
+  width: 140px;
+}
+
+/* Vista previa */
+.settings-section--preview {
+  background-color: var(--color-bg-preview, #f9fafb);
+  border-color: var(--color-border-preview, #e5e7eb);
+}
+
+.settings-preview-card {
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.settings-preview-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.settings-preview-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted, #9ca3af);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.settings-preview-value {
+  font-size: 0.875rem;
+  color: var(--color-text-primary, #111827);
+  font-weight: 500;
+}
+
+.settings-preview-body {
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.settings-preview-body p {
+  margin: 0 0 8px;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary, #374151);
+}
+
+.settings-preview-body p:last-child {
+  margin-bottom: 0;
+}
+
+.settings-preview-body strong {
+  color: var(--color-text-primary, #111827);
+}
+
+.settings-preview-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.settings-preview-btn {
+  min-width: 120px;
+}
+
+.settings-preview-note {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted, #9ca3af);
+  text-align: center;
+}
+
+/* Botón test email */
+.settings-test-btn {
+  align-self: flex-start;
+  min-height: 44px;
+}
+
+/* Responsive: escritorio */
+@media (min-width: 1024px) {
+  .settings {
+    padding: 32px 24px;
+  }
+
+  .settings-title {
+    font-size: 1.75rem;
+    margin-bottom: 32px;
+  }
+
+  .settings-section {
+    padding: 24px;
+  }
+
+  .settings-input {
+    width: 100%;
+  }
+
+  .settings-input--time {
+    width: 160px;
+  }
+}
+
+/* Reducir movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .settings-input,
+  .settings-toggle-slider,
+  .settings-toggle-slider::before {
+    transition: none;
+  }
+}
+
+/* Alto contraste */
+@media (prefers-contrast: high) {
+  .settings-section {
+    border-width: 2px;
+  }
+  .settings-input {
+    border-width: 2px;
+  }
+  .settings-toggle-slider {
+    border: 2px solid currentColor;
+  }
+  .settings-preview-card {
+    border-width: 2px;
+  }
+}

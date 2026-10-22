@@ -1,6 +1,7 @@
 import { renderNav } from './nav.js';
-import { renderConversations, renderBusinesses, renderSettings, renderConversationDetail, renderBusinessDetailScreen, renderSources } from './screens.js';
+import { renderConversations, renderBusinesses, renderSettingsScreen, renderConversationDetail, renderBusinessDetailScreen, renderSources } from './screens.js';
 import { renderConversationRows } from './conversationList.js';
+import { renderLogin, bindLoginEvents } from './login.js';
 import { parseHash, getBusinessIdFromHash, isSourcesView } from '../domain/navigation.js';
 import { createMockService } from '../services/mockService.js';
 import { getWindowChip } from '../domain/window.js';
@@ -19,6 +20,8 @@ const state = {
   selectedStatus: 'all',
   searchQuery: '',
   businessColors: {},
+  // Autenticación (maqueta)
+  isLoggedIn: false,
   // Detalle de conversación
   currentConversationId: null,
   currentConversation: null,
@@ -28,6 +31,8 @@ const state = {
   currentBusiness: null,
   businessNumbers: [],
   businessSources: [],
+  // Ajustes
+  notificationSettings: null,
 };
 
 async function init() {
@@ -106,6 +111,28 @@ async function init() {
     }
   });
 
+  // Login events: delegado en document porque el form se recrea
+  document.addEventListener('submit', async (e) => {
+    const form = e.target.closest('#login-form');
+    if (form) {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const email = formData.get('email')?.trim() ?? '';
+      const password = formData.get('password')?.trim() ?? '';
+
+      const errorEl = document.getElementById('login-error');
+      if (!email || !password) {
+        if (errorEl) errorEl.hidden = false;
+        return;
+      }
+
+      if (errorEl) errorEl.hidden = true;
+      // Login exitoso (maqueta): cualquier credencial
+      state.isLoggedIn = true;
+      window.location.hash = '#/conversaciones';
+    }
+  });
+
   renderAll();
 }
 
@@ -118,6 +145,18 @@ function renderScreen(state) {
   const destination = parseHash(state.currentHash);
   const app = document.getElementById('app');
   app.textContent = '';
+
+  // Si no está logueado y no es login, redirigir a login
+  if (!state.isLoggedIn && destination !== 'login') {
+    window.location.hash = '#/login';
+    return;
+  }
+
+  // Si está logueado y va a login, redirigir a conversaciones
+  if (state.isLoggedIn && destination === 'login') {
+    window.location.hash = '#/conversaciones';
+    return;
+  }
 
   switch (destination) {
     case 'conversaciones':
@@ -140,7 +179,14 @@ function renderScreen(state) {
       }
       break;
     case 'ajustes':
-      app.appendChild(renderSettings(state));
+      app.appendChild(renderSettingsScreen(state));
+      break;
+    case 'login':
+      app.innerHTML = renderLogin(state);
+      bindLoginEvents(() => {
+        state.isLoggedIn = true;
+        window.location.hash = '#/conversaciones';
+      });
       break;
   }
 }

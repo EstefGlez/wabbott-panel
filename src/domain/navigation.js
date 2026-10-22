@@ -1,19 +1,22 @@
 /** @returns {readonly string[]} */
 export const DESTINATIONS = Object.freeze(['conversaciones', 'negocios', 'ajustes']);
 
+/** @returns {readonly string[]} Destinos válidos para parseHash (incluye login para routing interno) */
+export const ALL_DESTINATIONS = Object.freeze(['conversaciones', 'negocios', 'ajustes', 'login']);
+
 /**
- * Convierte un hash de la URL (p.ej. '#/negocios') en un destino válido.
+ * Convierte un hash de la URL (p.ej. '#/login') en un destino válido.
  * @param {string} hash — window.location.hash (incluye #)
- * @returns {string} Uno de DESTINATIONS
+ * @returns {string} Uno de ALL_DESTINATIONS
  */
 export function parseHash(hash) {
   if (!hash) {
-    return 'conversaciones';
+    return 'login';
   }
   const path = hash.replace(/^#\/?/, '');
 
   // Exact match for main destinations
-  if (DESTINATIONS.includes(path)) {
+  if (ALL_DESTINATIONS.includes(path)) {
     return path;
   }
 
@@ -29,7 +32,7 @@ export function parseHash(hash) {
     return 'negocios';
   }
 
-  return 'conversaciones';
+  return 'login';
 }
 
 /**

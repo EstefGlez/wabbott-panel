@@ -1,12 +1,19 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { DESTINATIONS, parseHash, isActive, getBusinessIdFromHash, isSourcesView } from '../src/domain/navigation.js';
+import { DESTINATIONS, ALL_DESTINATIONS, parseHash, isActive, getBusinessIdFromHash, isSourcesView } from '../src/domain/navigation.js';
 
 describe('navigation', () => {
   describe('DESTINATIONS', () => {
-    it('has length 3 and correct order', () => {
+    it('has length 3 and correct order (nav bar destinations only)', () => {
       assert.deepEqual(DESTINATIONS, ['conversaciones', 'negocios', 'ajustes']);
       assert.equal(DESTINATIONS.length, 3);
+    });
+  });
+
+  describe('ALL_DESTINATIONS', () => {
+    it('has length 4 and includes login for internal routing', () => {
+      assert.deepEqual(ALL_DESTINATIONS, ['conversaciones', 'negocios', 'ajustes', 'login']);
+      assert.equal(ALL_DESTINATIONS.length, 4);
     });
   });
 
@@ -23,24 +30,28 @@ describe('navigation', () => {
       assert.equal(parseHash('#/ajustes'), 'ajustes');
     });
 
-    it('defaults to conversaciones for #/', () => {
-      assert.equal(parseHash('#/'), 'conversaciones');
+    it('parses #/login', () => {
+      assert.equal(parseHash('#/login'), 'login');
     });
 
-    it('defaults to conversaciones for unknown route', () => {
-      assert.equal(parseHash('#/desconocido'), 'conversaciones');
+    it('defaults to login for #/', () => {
+      assert.equal(parseHash('#/'), 'login');
     });
 
-    it('defaults to conversaciones for empty string', () => {
-      assert.equal(parseHash(''), 'conversaciones');
+    it('defaults to login for unknown route', () => {
+      assert.equal(parseHash('#/desconocido'), 'login');
     });
 
-    it('defaults to conversaciones for null', () => {
-      assert.equal(parseHash(null), 'conversaciones');
+    it('defaults to login for empty string', () => {
+      assert.equal(parseHash(''), 'login');
     });
 
-    it('defaults to conversaciones for undefined', () => {
-      assert.equal(parseHash(undefined), 'conversaciones');
+    it('defaults to login for null', () => {
+      assert.equal(parseHash(null), 'login');
+    });
+
+    it('defaults to login for undefined', () => {
+      assert.equal(parseHash(undefined), 'login');
     });
 
     it('parses #negocios (no leading slash)', () => {
@@ -48,11 +59,11 @@ describe('navigation', () => {
     });
 
     it('rejects trailing slash as unknown', () => {
-      assert.equal(parseHash('#/negocios/'), 'conversaciones');
+      assert.equal(parseHash('#/negocios/'), 'login');
     });
 
     it('rejects uppercase as unknown', () => {
-      assert.equal(parseHash('#/NEGOCIOS'), 'conversaciones');
+      assert.equal(parseHash('#/NEGOCIOS'), 'login');
     });
 
     // New business detail routes
@@ -67,8 +78,8 @@ describe('navigation', () => {
     });
 
     it('rejects invalid nested routes under negocios', () => {
-      assert.equal(parseHash('#/negocios/biz-gh/otro'), 'conversaciones');
-      assert.equal(parseHash('#/negocios/biz-gh/fuentes/extra'), 'conversaciones');
+      assert.equal(parseHash('#/negocios/biz-gh/otro'), 'login');
+      assert.equal(parseHash('#/negocios/biz-gh/fuentes/extra'), 'login');
     });
   });
 
@@ -120,7 +131,7 @@ describe('navigation', () => {
     });
 
     it('returns true for default when hash is unknown', () => {
-      assert.equal(isActive('#/inventado', 'conversaciones'), true);
+      assert.equal(isActive('#/inventado', 'login'), true);
     });
 
     it('returns true for detail route when target is negocios', () => {
