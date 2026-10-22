@@ -12,7 +12,10 @@
  * @property {string} [previewText]
  */
 
-export const CONTEXT_LIMIT = 30000;
+import { CONTEXT_LIMIT } from './contract.js';
+import { calculateTotalChars, getBudgetLevel, getBudgetMessage } from './contextBudget.js';
+
+export { CONTEXT_LIMIT };
 export const SOURCE_KINDS = ['url', 'pdf', 'md', 'txt', 'text'];
 export const SOURCE_STATUSES = ['ready', 'processing', 'error'];
 
@@ -99,27 +102,27 @@ export function formatCharCount(n) {
 }
 
 /**
- * Calcula el presupuesto de contexto sumando solo fuentes habilitadas.
+ * Calcula el presupuesto de contexto sumando solo fuentes habilitadas con status 'ready'.
  * @param {KnowledgeSource[]} sources
- * @param {number} [limit=30000]
+ * @param {number} [limit=CONTEXT_LIMIT]
  * @returns {{ totalChars: number, percentage: number, status: 'safe'|'warning'|'danger', message?: string }}
  */
 export function calculateContextBudget(sources, limit = CONTEXT_LIMIT) {
-  const totalChars = sources
-    .filter(s => s.enabled === true)
-    .reduce((sum, s) => sum + (Number.isInteger(s.charCount) ? s.charCount : 0), 0);
-
+  const totalChars = calculateTotalChars(sources);
   const percentage = limit > 0 ? Math.round((totalChars / limit) * 100) : 0;
 
-  let status = 'safe';
-  let message = undefined;
+  const level = getBudgetLevel(totalChars);
+  let status, message;
 
-  if (percentage > 100) {
-    status = 'danger';
-    message = `Límite de contexto superado (${percentage}%)`;
-  } else if (percentage >= 80) {
+  if (level === 'normal') {
+    status = 'safe';
+    message = undefined;
+  } else if (level === 'warning') {
     status = 'warning';
     message = `Próximo al límite de contexto (${percentage}%)`;
+  } else if (level === 'danger') {
+    status = 'danger';
+    message = getBudgetMessage(level);
   }
 
   return { totalChars, percentage, status, message };

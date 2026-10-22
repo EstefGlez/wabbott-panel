@@ -208,7 +208,7 @@ function renderContextBudget(budget) {
   } else if (budget.status === 'warning') {
     statusText = `Próximo al límite (${budget.percentage}%)`;
   } else if (budget.status === 'danger') {
-    statusText = `¡Límite superado! (${budget.percentage}%)`;
+    statusText = budget.message || `¡Límite superado! (${budget.percentage}%)`;
   }
 
   const status = document.createElement('span');
