@@ -1,5 +1,5 @@
 # Spec 009: Esqueleto del servidor, seguridad global y esquema de base de datos
-Estado: borrador
+Estado: aprobado
 
 ## Contexto y objetivo
 Inicio del backend del panel. Crear el servidor Express en `server/` con las
